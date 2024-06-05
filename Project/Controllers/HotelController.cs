@@ -2,24 +2,27 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using HotelBookingSystem.Services;
+using AutoMapper;
+
 namespace HotelBookingSystem.Controllers
 {
     [Route("api/Hotel")]
     [ApiController]
-    
     public class HotelController : ControllerBase
     {
         private readonly IHotelRepository _hotelRepo;
+        private readonly IMapper _mapper;
 
-        public HotelController(IHotelRepository hotelRepo)
+        public HotelController(IHotelRepository hotelRepo, IMapper mapper)
         {
             _hotelRepo = hotelRepo;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllHotels(string? orderBy = "")
         {
-            IEnumerable<Hotel> hotels;
+            IEnumerable<HotelDto> hotels;
 
             switch (orderBy.ToLower())
             {
@@ -42,14 +45,14 @@ namespace HotelBookingSystem.Controllers
 
             return Ok(hotels);
         }
-        
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetHotelById(int id)
         {
             var hotel = await _hotelRepo.GetHotelById(id);
             if (hotel == null)
             {
-                return NotFound(); 
+                return NotFound();
             }
             return Ok(hotel);
         }
@@ -66,16 +69,40 @@ namespace HotelBookingSystem.Controllers
             return NoContent(); // Hotel successfully deleted
         }
 
-        // POST: api/hotel
+       
+       
         [HttpPost]
-        public async Task<IActionResult> AddHotel(Hotel hotel)
+        public async Task<IActionResult> AddHotel(HotelCreateDto simpleHotelCreateDto)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState); // Invalid hotel data
+                return BadRequest(ModelState);
             }
-            await _hotelRepo.AddHotel(hotel);
-            return CreatedAtAction(nameof(GetHotelById), new { id = hotel.HotelId }, hotel); // Hotel successfully added
+            
+            var hotelCreateDto = _mapper.Map<HotelCreateDto>(simpleHotelCreateDto);
+            
+            await _hotelRepo.AddHotel(hotelCreateDto);
+
+            return StatusCode(201); 
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateHotel(int id, HotelUpdateDto hotelUpdateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var existingHotel = await _hotelRepo.GetHotelById(id);
+            if (existingHotel == null)
+            {
+                return NotFound();
+            }
+
+            await _hotelRepo.UpdateHotel(id, hotelUpdateDto);
+
+            return NoContent(); // Hotel successfully updated
         }
     }
 }

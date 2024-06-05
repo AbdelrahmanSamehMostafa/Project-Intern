@@ -11,7 +11,6 @@ public class Address
     [ForeignKey("HotelId")]
     public Hotel Hotel { get; set; }
 
-
     [Required]
     [StringLength(50)]
     public string? City { get; set; }

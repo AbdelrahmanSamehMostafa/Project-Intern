@@ -54,6 +54,7 @@ namespace HotelBookingSystem.Controllers
         public async Task<ActionResult<AdminDTO>> CreateAdmin(AdminForCreationDTO admin)
         {
             var adminEntity = _mapper.Map<Admin>(admin);
+            adminEntity.SuperAdminId = 1; 
             await _adminRepository.CreateAdminAsync(adminEntity);
 
             var adminToReturn = _mapper.Map<AdminDTO>(admin);

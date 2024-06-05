@@ -1,6 +1,6 @@
 namespace HotelBookingSystem.Data.Models
 {
-    public class AddressForCreationDTO
+    public class AddressForCreationDTO: AddressBaseDTO
     {
     }
     

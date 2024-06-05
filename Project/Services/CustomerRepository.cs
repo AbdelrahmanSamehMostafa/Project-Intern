@@ -68,5 +68,9 @@ namespace HotelBookingSystem.Services
         {
             return await _dbContext.Customers.AnyAsync(c => c.CustomerId == id);
         }
+        public async Task<Customer> GetCustomerByEmailAsync(string email)
+        {
+            return await _dbContext.Customers.SingleOrDefaultAsync(c => c.Email == email);
+        }
     }
 }

@@ -25,6 +25,8 @@ public class Customer
     [MinLength(8)]
     public string Password { get; set; }
 
+    public bool IsEmailVerified { get; set; }
+
 }
 
 

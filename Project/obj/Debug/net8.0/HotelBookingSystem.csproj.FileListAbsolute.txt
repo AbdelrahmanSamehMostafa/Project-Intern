@@ -274,3 +274,6 @@ D:\Intern\Project\Project\obj\Debug\net8.0\refint\HotelBookingSystem.dll
 D:\Intern\Project\Project\obj\Debug\net8.0\HotelBookingSystem.pdb
 D:\Intern\Project\Project\obj\Debug\net8.0\HotelBookingSystem.genruntimeconfig.cache
 D:\Intern\Project\Project\obj\Debug\net8.0\ref\HotelBookingSystem.dll
+D:\Intern\Project\Project\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\Intern\Project\Project\bin\Debug\net8.0\SendGrid.dll
+D:\Intern\Project\Project\bin\Debug\net8.0\StarkbankEcdsa.dll

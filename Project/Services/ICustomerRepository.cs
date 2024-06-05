@@ -13,6 +13,7 @@ namespace HotelBookingSystem.Services
         public Task UpdateCustomerAsync(Customer customer);
         public Task DeleteCustomerAsync(int customerId);
         public Task<bool> CustomerExistsAsync(int id);
+        public Task<Customer> GetCustomerByEmailAsync(string email);
     }
 }
 
