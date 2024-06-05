@@ -2,9 +2,9 @@ using AutoMapper;
 using HotelBookingSystem.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Project.Services;
+using HotelBookingSystem.Services;
 
-namespace MyApp.Namespace
+namespace HotelBookingSystem.Controllers
 {
     [Route("api/Customer")]
     [ApiController]

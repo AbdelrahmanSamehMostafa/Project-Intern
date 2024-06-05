@@ -2,7 +2,6 @@ using AutoMapper;
 using HotelBookingSystem.Data.Models;
 using HotelBookingSystem.Services;
 using Microsoft.AspNetCore.Mvc;
-using Project.Services;
 
 namespace HotelBookingSystem.Controllers
 {
@@ -92,9 +91,7 @@ namespace HotelBookingSystem.Controllers
             if(reviewId != reviewWithIdDTO.ReviewId)
                 return BadRequest();
 
-            // map to the existing review as we want to update the existing review
-            // don't map to a new review object
-            //var reviewToUpdate = _mapper.Map<Review>(reviewWithIdDTO);
+            
             _mapper.Map(reviewWithIdDTO, existingReview);
 
             await _reviewRepository.UpdateReviewAsync(existingReview);

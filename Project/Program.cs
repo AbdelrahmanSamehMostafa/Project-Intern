@@ -1,7 +1,6 @@
 using HotelBookingSystem.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Project.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -30,6 +29,8 @@ builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+builder.Services.AddScoped<IHotelRepository,HotelRepository>();
+builder.Services.AddScoped<ISuperAdminRepository,SuperAdminRepository>();
 
 
 builder.Services.AddEndpointsApiExplorer();

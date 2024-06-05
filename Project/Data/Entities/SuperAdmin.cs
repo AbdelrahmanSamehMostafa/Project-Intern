@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Azure.Core;
 
 public class SuperAdmin
 {
@@ -14,7 +15,7 @@ public class SuperAdmin
     [StringLength(100)]
     public string Password { get; private set; } = "admin";
 
-    public List<Admin> Admins { get; set; } = new List<Admin>();
+    //public List<PendingReq>? PendingReqs { get; set; } = new List<PendingReq>();
 
     public SuperAdmin(string name, string password)
     {

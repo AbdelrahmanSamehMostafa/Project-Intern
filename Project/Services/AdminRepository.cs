@@ -24,6 +24,13 @@ namespace HotelBookingSystem.Services
         {
             return await _dbContext.Admins.Where(e => e.AdminId == adminId).FirstOrDefaultAsync();
         }
+        public async void CreateAdminReq(Admin admin){
+            var RequestToAdd=new PendingReq{
+                AdminID = admin.AdminId,
+                SuperAdminID=1
+            };
+             _dbContext.PendingReqs.Add(RequestToAdd);
+        }
 
         public async Task CreateAdminAsync(Admin admin)
         {
@@ -33,6 +40,9 @@ namespace HotelBookingSystem.Services
             }
 
             _dbContext.Admins.Add(admin);
+            
+            await _dbContext.SaveChangesAsync();
+            CreateAdminReq(admin);
             await _dbContext.SaveChangesAsync();
         }
 

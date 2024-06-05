@@ -4832,19 +4832,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\loOoMa\\.nuget\\packages\\": {}
+    "C:\\Users\\EslaM\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\Codes\\Intern Projects\\HotelBookingSystem\\HotelBookingSystem\\HotelBookingSystem.csproj",
+      "projectUniqueName": "D:\\Intern\\Project\\Project\\HotelBookingSystem.csproj",
       "projectName": "HotelBookingSystem",
-      "projectPath": "F:\\Codes\\Intern Projects\\HotelBookingSystem\\HotelBookingSystem\\HotelBookingSystem.csproj",
-      "packagesPath": "C:\\Users\\loOoMa\\.nuget\\packages\\",
-      "outputPath": "F:\\Codes\\Intern Projects\\HotelBookingSystem\\HotelBookingSystem\\obj\\",
+      "projectPath": "D:\\Intern\\Project\\Project\\HotelBookingSystem.csproj",
+      "packagesPath": "C:\\Users\\EslaM\\.nuget\\packages\\",
+      "outputPath": "D:\\Intern\\Project\\Project\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\loOoMa\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\EslaM\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -4929,7 +4929,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.203/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

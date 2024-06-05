@@ -1,20 +1,41 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Project.Services;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using HotelBookingSystem.Data.Models;
+using HotelBookingSystem.Services;
 
-namespace MyApp.Namespace
+namespace HotelBookingSystem.Controllers
 {
-    [Route("api/Customer")]
     [ApiController]
+    [Route("api/SuperAdmin")]
     public class SuperAdminController : ControllerBase
     {
-        private ISuperAdminRepository _superAdminRepository;
+        private readonly ISuperAdminRepository _superAdminRepo;
 
-        public SuperAdminController(ISuperAdminRepository superAdminRepository)
+        public SuperAdminController(ISuperAdminRepository superAdminRepo)
         {
-            _superAdminRepository = superAdminRepository;
+            _superAdminRepo = superAdminRepo;
         }
 
+        [HttpGet("requests")]
+        public async Task<IActionResult> GetPendingRequests()
+        {
+            var requests = await _superAdminRepo.GetPendingRequests();
+            return Ok(requests);
+        }
 
+        [HttpPost("accept/{requestId}")]
+        public async Task<IActionResult> AcceptRequest(int requestId)
+        {
+            await _superAdminRepo.AcceptRequest(requestId);
+            return Ok();
+        }
+
+        [HttpPost("reject/{requestId}")]
+        public async Task<IActionResult> RejectRequest(int requestId)
+        {
+            await _superAdminRepo.RejectRequest(requestId);
+            return Ok();
+        }
     }
 }
