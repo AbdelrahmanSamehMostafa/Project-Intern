@@ -5,7 +5,7 @@ using HotelBookingSystem.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-
+using HotelBookingSystem.Models;
 namespace HotelBookingSystem.Controllers
 {
     [Route("api/Authentication")]
@@ -24,7 +24,7 @@ namespace HotelBookingSystem.Controllers
 
         [HttpGet]
         [Route("ValidateUserCredentials")]
-        public async Task<dynamic> ValidateUserCredentials([FromForm]string email, [FromForm]string password)
+        public async Task<dynamic> ValidateUserCredentials([FromForm] string email, [FromForm] string password)
         {
             var user = await _validationServices.ValidateUserCredentials(email, password);
             if (user != null)
@@ -32,29 +32,28 @@ namespace HotelBookingSystem.Controllers
                 return user;
             }
 
-           return null;   
+            return null;
         }
 
         [HttpPost]
         [Route("Login")]
-
-        public async Task<ActionResult<string>> Login([FromBody] UserForLoginDTO userForLoginDTO)
+        public async Task<ActionResult<LoginResponseDTO>> Login([FromBody] UserForLoginDTO userForLoginDTO)
         {
-            var user = await ValidateUserCredentials(userForLoginDTO.Email, userForLoginDTO.Password);
+            var user = await _validationServices.ValidateUserCredentials(userForLoginDTO.Email, userForLoginDTO.Password);
 
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized(); // Return 401 Unauthorized if credentials are invalid
             }
 
-            var tokenToReturn = _tokenServices.GenerateToken(user);
+            var token = _tokenServices.GenerateToken(user);
 
+            var response = new LoginResponseDTO
+            {
+                Token = token
+            };
 
-            return Ok(tokenToReturn);
+            return Ok(response); 
         }
-
-
-        
-
     }
 }

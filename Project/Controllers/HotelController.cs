@@ -71,14 +71,14 @@ namespace HotelBookingSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddHotel(HotelCreateDto simpleHotelCreateDto)
+        public async Task<IActionResult> AddHotel(HotelCreateDto hotelCreateDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var hotelToCreate = _mapper.Map<Hotel>(simpleHotelCreateDto);
+            var hotelToCreate = _mapper.Map<Hotel>(hotelCreateDto);
 
             await _hotelRepo.AddHotel(hotelToCreate);
 
