@@ -1,7 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:hotel_booking_system_frontend_flutter/Screens/Admin%20Screens/admin_homepage.dart';
+import 'package:hotel_booking_system_frontend_flutter/Screens/Customer%20Screens/customer_homepage.dart';
 import 'package:http/http.dart' as http;
-
-import 'forget_password.dart'; // Add this line
 
 class CustomerAndAdminLogin extends StatefulWidget {
   const CustomerAndAdminLogin({super.key});
@@ -15,6 +16,66 @@ class _CustomerAndAdminLoginState extends State<CustomerAndAdminLogin> {
   final loginPasswordController = TextEditingController();
   String? loginEmailErrorText;
   String? loginPasswordErrorText;
+
+  Future<void> login() async {
+    final Uri uri = Uri.parse('http://localhost:5187/api/Authentication/Login');
+    final Map<String, String> headers = {'Content-Type': 'application/json'};
+    final Map<String, dynamic> body = {
+      'email': loginEmailController.text.trim(),
+      'password': loginPasswordController.text.trim(),
+    };
+
+    try {
+      final response = await http.post(uri, headers: headers, body: jsonEncode(body));
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        if (jsonResponse.containsKey('token')) {
+          final token = jsonResponse['token'] as String;
+          decodeToken(token); // Call the decodeToken method with the obtained token
+        } else {
+          // Handle unexpected response format
+          print('Unexpected response format: ${response.body}');
+        }
+      } else {
+        // Handle non-200 status code
+        print('HTTP Error: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network errors or JSON parsing errors
+      print('Error: $e');
+    }
+  }
+
+  void decodeToken(String token) {
+    try {
+      final parts = token.split('.');
+      if (parts.length != 3) {
+        throw FormatException('Invalid token');
+      }
+
+      final payload = parts[1];
+      final String decodedPayload = utf8.decode(base64Url.decode(base64.normalize(payload)));
+      final Map<String, dynamic> decodedMap = json.decode(decodedPayload);
+
+      final role = decodedMap['role'] as String;
+
+      // Ensure to parse 'id' field as int
+      final customerId = int.tryParse(decodedMap['id'].toString()) ?? 0;
+
+      // Navigate based on role
+      if (role == 'Customer') {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CustomerHomePage(custId: customerId)));
+      } else if (role == 'Admin') {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AdminHomePage()));
+      } else {
+        // Handle unknown role
+        print('Unknown role: $role');
+      }
+    } catch (e) {
+      print('Error decoding token: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,31 +130,6 @@ class _CustomerAndAdminLoginState extends State<CustomerAndAdminLogin> {
                         errorText: loginPasswordErrorText,
                       ),
                     ),
-                    const SizedBox(height: 14),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            // Defines the action to perform on tapping forget password
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ForgetPassword(),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            // Text widget for displaying 'Forget Password'
-                            'Forget Password',
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 67, 84, 236),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                     const SizedBox(height: 16),
                     SizedBox(
                       width: 400,
@@ -106,28 +142,7 @@ class _CustomerAndAdminLoginState extends State<CustomerAndAdminLogin> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        onPressed: () {
-                          bool hasError = false;
-                          setState(() {
-                            //check email
-                            if (loginEmailController.text.isEmpty) {
-                              loginEmailErrorText = "FirstName is required";
-                              hasError = true;
-                            } else {
-                              loginEmailErrorText = null;
-                            }
-                            //check password
-                            if (loginPasswordController.text.isEmpty) {
-                              loginPasswordErrorText = "LastName is required";
-                              hasError = true;
-                            } else {
-                              loginPasswordErrorText = null;
-                            }
-                          });
-                          if (hasError == false) {
-                            Login();
-                          }
-                        },
+                        onPressed: login,
                         child: const Text("Login", style: TextStyle(fontSize: 22)),
                       ),
                     ),
@@ -140,6 +155,4 @@ class _CustomerAndAdminLoginState extends State<CustomerAndAdminLogin> {
       ),
     );
   }
-
-  Future<void> Login() async {}
 }

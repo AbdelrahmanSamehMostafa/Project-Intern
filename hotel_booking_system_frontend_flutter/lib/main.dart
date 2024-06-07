@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_booking_system_frontend_flutter/Screens/Admin%20Screens/admin_homepage.dart';
 import 'package:hotel_booking_system_frontend_flutter/Screens/Customer%20Screens/customer_homepage.dart';
 import 'package:hotel_booking_system_frontend_flutter/Screens/Customer%20Screens/customer_verify_otp.dart';
 import 'package:hotel_booking_system_frontend_flutter/Screens/Main%20Screens/welcome_screen.dart';
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Hotel Booking System',
-      home: WelcomeScreen(),
+      home: CustomerHomePage(custId: 1),
     );
   }
 }

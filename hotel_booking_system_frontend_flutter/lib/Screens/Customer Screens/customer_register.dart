@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hotel_booking_system_frontend_flutter/Screens/Customer%20Screens/customer_verify_otp.dart';
 import 'package:http/http.dart' as http; // Add this line
-import 'customer_homepage.dart';
+
 
 class CustomerRegister extends StatefulWidget {
   const CustomerRegister({super.key});

@@ -1,23 +1,29 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:hotel_booking_system_frontend_flutter/Screens/Customer%20Screens/Customer_account_info.dart';
-import 'package:hotel_booking_system_frontend_flutter/Screens/Customer%20Screens/customer_booking_history.dart';
-import 'package:hotel_booking_system_frontend_flutter/Screens/Customer%20Screens/customer_review_history.dart';
-import 'package:hotel_booking_system_frontend_flutter/Screens/Customer%20Screens/customer_wishlist.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-
+import 'dart:convert';
 import '../../Model/hotel.dart';
-import 'Customer_view_hotel_details.dart'; // Import the new page
+import '../../widgets/hotel_list_tile.dart';
+import '../Main Screens/welcome_screen.dart';
+import 'Customer_view_hotel_details.dart';
+import 'Customer_account_info.dart';
+import 'customer_booking_history.dart';
+import 'customer_review_history.dart';
+import 'customer_wishlist.dart';
 
 class CustomerHomePage extends StatefulWidget {
-  const CustomerHomePage({Key? key}) : super(key: key);
+  final int custId;
+
+  const CustomerHomePage({super.key, required this.custId});
 
   @override
-  _CustomerHomePageState createState() => _CustomerHomePageState();
+  CustomerHomePageState createState() => CustomerHomePageState();
 }
 
-class _CustomerHomePageState extends State<CustomerHomePage> {
+class CustomerHomePageState extends State<CustomerHomePage> {
   late List<Hotel> hotels = []; // List to store fetched hotels
+  late List<Hotel> filteredHotels = []; // List to store filtered hotels
+  String searchQuery = '';
 
   @override
   void initState() {
@@ -36,7 +42,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
         final List<dynamic> jsonData = json.decode(response.body);
         setState(() {
           hotels = jsonData.map((json) => Hotel.fromJson(json)).toList();
-          print(hotels);
+          filteredHotels = hotels;
         });
       } else {
         // If the server returns an error response, throw an exception
@@ -49,7 +55,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
   }
 
   void navigateToHome() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const CustomerHomePage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerHomePage(custId: widget.custId)));
   }
 
   void navigateToMyAccount() {
@@ -65,16 +71,27 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
   }
 
   void navigateToWishlist() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const CustomerWishlist()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerWishlist(customerId: widget.custId)));
   }
 
   void navigateToHotelDetails(Hotel hotel) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CustomerViewHotelDetails(hotel: hotel),
-      ),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerViewHotelDetails(hotel: hotel)));
+  }
+
+  void updateSearchQuery(String query) {
+    setState(() {
+      searchQuery = query;
+      filteredHotels = hotels.where((hotel) => hotel.name.toLowerCase().contains(query.toLowerCase())).toList();
+    });
+  }
+
+  Future<void> _signOut(BuildContext context) async {
+    // Clear token from local storage (example with SharedPreferences)
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token');
+
+    // Navigate back to login screen (replace with your actual login route)
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const WelcomeScreen()));
   }
 
   @override
@@ -102,6 +119,10 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
               style: TextStyle(color: Colors.white),
             ),
           ),
+          IconButton(
+            icon: const Icon(Icons.exit_to_app),
+            onPressed: () => _signOut(context),
+          ),
         ],
       ),
       drawer: Drawer(
@@ -121,59 +142,78 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.history),
+              leading: const Icon(
+                Icons.history,
+                color: Colors.blue,
+              ),
               title: const Text('Booking History'),
               onTap: navigateToBookingHistory,
             ),
             ListTile(
-              leading: const Icon(Icons.rate_review),
+              leading: const Icon(
+                Icons.rate_review,
+                color: Colors.blue,
+              ),
               title: const Text('Review History'),
               onTap: navigateToReviewHistory,
             ),
             ListTile(
-              leading: const Icon(Icons.favorite),
+              leading: const Icon(
+                Icons.favorite,
+                color: Colors.red,
+              ),
               title: const Text('Wishlist'),
               onTap: navigateToWishlist,
             ),
             ListTile(
-              leading: const Icon(Icons.account_circle_rounded),
+              leading: const Icon(
+                Icons.account_circle_rounded,
+                color: Colors.blue,
+              ),
               title: const Text('Account'),
               onTap: navigateToMyAccount,
             ),
           ],
         ),
       ),
-      body: hotels.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : Center(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    columns: const [
-                      DataColumn(label: Text('Hotel Name')),
-                      DataColumn(label: Text('Rating')),
-                      DataColumn(label: Text('Available Rooms')),
-                    ],
-                    rows: hotels
-                        .map(
-                          (hotel) => DataRow(
-                            cells: [
-                              DataCell(
-                                Text(hotel.name),
-                                onTap: () => navigateToHotelDetails(hotel),
-                              ),
-                              DataCell(Text(hotel.rating.toStringAsFixed(1))),
-                              DataCell(Text(hotel.numberOfAvailableRooms.toString())),
-                            ],
-                          ),
-                        )
-                        .toList(),
-                  ),
+      body: Column(
+        children: [
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: TextField(
+              onChanged: updateSearchQuery,
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
+                hintText: 'Search hotels...',
+                hintStyle: const TextStyle(color: Colors.black54),
+                filled: true,
+                fillColor: Colors.grey[300],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide.none,
                 ),
+                prefixIcon: const Icon(Icons.search, color: Colors.black),
               ),
             ),
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: hotels.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    itemCount: filteredHotels.length,
+                    itemBuilder: (context, index) {
+                      final hotel = filteredHotels[index];
+                      return HotelListTile(
+                        hotel: hotel,
+                        onTap: () => navigateToHotelDetails(hotel),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
     );
   }
 }

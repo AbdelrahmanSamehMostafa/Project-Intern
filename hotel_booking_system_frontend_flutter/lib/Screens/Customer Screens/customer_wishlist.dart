@@ -1,22 +1,81 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import '../../Model/hotel.dart';
+import '../../widgets/hotel_list_tile.dart';
+import 'customer_view_hotel_details.dart';
 
-class CustomerWishlist extends StatelessWidget {
-  const CustomerWishlist({super.key});
+class CustomerWishlist extends StatefulWidget {
+  final int customerId;
+
+  const CustomerWishlist({Key? key, required this.customerId}) : super(key: key);
+
+  @override
+  _CustomerWishlistState createState() => _CustomerWishlistState();
+}
+
+class _CustomerWishlistState extends State<CustomerWishlist> {
+  late List<Hotel> wishlistHotels = []; // List to store fetched wishlist hotels
+
+  @override
+  void initState() {
+    super.initState();
+    fetchWishlistHotels();
+  }
+
+  Future<void> fetchWishlistHotels() async {
+    final Uri uri = Uri.parse('http://localhost:5187/api/Customer/${widget.customerId}/hotels');
+
+    try {
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        final dynamic jsonData = jsonDecode(response.body);
+
+        // Check if jsonData is not null and is a List
+        if (jsonData != null && jsonData is List) {
+          setState(() {
+            wishlistHotels = jsonData.map((json) => Hotel.fromJson(json)).toList();
+          });
+        } else {
+          throw Exception('Failed to parse wishlist hotels data');
+        }
+      } else {
+        throw Exception('Failed to load wishlist hotels: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching wishlist hotels: $e');
+      // Handle error, show an error message to the user
+    }
+  }
+
+  void navigateToHotelDetails(Hotel hotel) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerViewHotelDetails(hotel: hotel)));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey,
         title: const Text(
-          'CustomerWishlist',
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+          'Wishlist',
+          style: TextStyle(fontSize: 30),
         ),
         centerTitle: true,
+        backgroundColor: Colors.grey,
       ),
-      body: Center(
-        child: Text("CustomerWishlist page"),
-      ),
+      body: wishlistHotels.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: wishlistHotels.length,
+              itemBuilder: (context, index) {
+                final hotel = wishlistHotels[index];
+                return HotelListTile(
+                  hotel: hotel,
+                  onTap: () => navigateToHotelDetails(hotel),
+                );
+              },
+            ),
     );
   }
 }

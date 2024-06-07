@@ -1,9 +1,12 @@
-import 'dart:async';
+// ignore_for_file: use_build_context_synchronously
+
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hotel_booking_system_frontend_flutter/Screens/Customer%20Screens/customer_homepage.dart';
+import 'package:hotel_booking_system_frontend_flutter/Screens/Main%20Screens/main_login.dart';
 import 'package:http/http.dart' as http; // Add this line
 
 class CustomerVerifyOTP extends StatefulWidget {
@@ -48,7 +51,7 @@ class CustomerVerifyOTPState extends State<CustomerVerifyOTP> {
 
       if (response.statusCode == 200) {
         // Successful OTP verification
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const CustomerHomePage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const CustomerAndAdminLogin()));
         print('Email verified successfully');
       } else {
         print('Failed to verify OTP: ${response.statusCode}');
@@ -117,12 +120,7 @@ class CustomerVerifyOTPState extends State<CustomerVerifyOTP> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     const SizedBox(width: 40),
-              //   ],
-              // ),
+
               const SizedBox(height: 40),
               SizedBox(
                 width: 400,

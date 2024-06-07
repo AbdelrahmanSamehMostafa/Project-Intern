@@ -3,6 +3,7 @@
         android:label="hotel_booking_system_frontend_flutter"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyARuKRPyApyFzHRs3LHE-k01uhEK6symH8"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
