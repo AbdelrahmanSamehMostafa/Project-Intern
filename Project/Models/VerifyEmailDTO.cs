@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HotelBookingSystem.Data.Models
+namespace HotelBookingSystem.Models
 {
     public class VerifyEmailDTO
     {

@@ -1,4 +1,4 @@
-using HotelBookingSystem.Data.Models;
+using HotelBookingSystem.Models;
 
 namespace HotelBookingSystem.Services
 {

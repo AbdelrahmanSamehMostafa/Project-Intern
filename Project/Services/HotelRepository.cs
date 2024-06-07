@@ -4,7 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HotelBookingSystem.Data.Models;
+using HotelBookingSystem.Models;
+
 
 namespace HotelBookingSystem.Services
 {
@@ -64,14 +65,13 @@ namespace HotelBookingSystem.Services
                 await _dbContext.SaveChangesAsync();
             }
         }
-        public async Task AddHotel(HotelCreateDto hotelCreateDto)
-        {
-            if (hotelCreateDto == null)
-            {
-                throw new ArgumentNullException(nameof(hotelCreateDto));
-            }
 
-            var hotel = _mapper.Map<Hotel>(hotelCreateDto);
+        public async Task AddHotel(Hotel hotel)
+        {
+            if (hotel == null)
+            {
+                throw new ArgumentNullException(nameof(hotel));
+            }
 
             _dbContext.Hotels.Add(hotel);
 

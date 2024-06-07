@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using HotelBookingSystem.Data.Models;
+using HotelBookingSystem.Models;
 using HotelBookingSystem.Services;
 
 namespace HotelBookingSystem.Controllers

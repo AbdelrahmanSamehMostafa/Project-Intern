@@ -1,5 +1,5 @@
 using AutoMapper;
-using HotelBookingSystem.Data.Models;
+using HotelBookingSystem.Models;
 using HotelBookingSystem.Services;
 using Microsoft.AspNetCore.Mvc;
 

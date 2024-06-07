@@ -14,20 +14,20 @@ namespace HotelBookingSystem.Services
 
         
 
-        public async Task<IEnumerable<Address>> GetAllAddressesAsync()
-        {
-            return await _context.Addresses.Include(a=> a.Hotel).ToListAsync();
-        }
+        // public async Task<IEnumerable<Address>> GetAllAddressesAsync()
+        // {
+        //     return await _context.Addresses.Include(a=> a.Hotel).ToListAsync();
+        // }
 
-        public async Task<Address?> GetAddressByIdAsync(int addressId)
-        {
-            var address = await _context.Addresses.Include(a=> a.Hotel).Where(a => a.AddressId == addressId).FirstOrDefaultAsync();
+        // public async Task<Address?> GetAddressByIdAsync(int addressId)
+        // {
+        //     var address = await _context.Addresses.Include(a=> a.Hotel).Where(a => a.AddressId == addressId).FirstOrDefaultAsync();
             
-            if(address == null)
-                return null;
+        //     if(address == null)
+        //         return null;
 
-            return address;
-        }
+        //     return address;
+        // }
 
         public async Task CreateAddressAsync(Address address)
         {
@@ -47,18 +47,18 @@ namespace HotelBookingSystem.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAddressAsync(int addressId)
-        {
-            if(addressId == 0)
-                throw new ArgumentNullException(nameof(addressId));
+        // public async Task DeleteAddressAsync(int addressId)
+        // {
+        //     if(addressId == 0)
+        //         throw new ArgumentNullException(nameof(addressId));
 
-            var address = await GetAddressByIdAsync(addressId);
-            if (address == null)
-                throw new ArgumentNullException(nameof(address));
+        //     var address = await GetAddressByIdAsync(addressId);
+        //     if (address == null)
+        //         throw new ArgumentNullException(nameof(address));
             
-            _context.Addresses.Remove(address);
-            await _context.SaveChangesAsync();
-        }
+        //     _context.Addresses.Remove(address);
+        //     await _context.SaveChangesAsync();
+        // }
 
         public async Task<bool> AddressExistsAsync(int id)
         {

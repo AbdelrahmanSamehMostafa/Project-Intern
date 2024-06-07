@@ -1,7 +1,10 @@
 using HotelBookingSystem.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Net.Http;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +33,30 @@ builder.Services.AddTransient<IEmailService>(provider => new EmailService(sendGr
 
 builder.Services.AddMemoryCache();
 
+var jwtSettings = builder.Configuration.GetSection("Authentication");
+var key = Encoding.ASCII.GetBytes(jwtSettings["SecretForKey"]);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
+
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
@@ -37,6 +64,12 @@ builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IHotelRepository, HotelRepository>();
 builder.Services.AddScoped<ISuperAdminRepository, SuperAdminRepository>();
+
+builder.Services.AddScoped<TokenServices>();
+builder.Services.AddScoped<ValidationServices>();
+
+var googleMapsSettings = builder.Configuration.GetSection("GoogleMaps");
+builder.Services.AddScoped(sp => new GoogleMapsServices(googleMapsSettings["ApiKey"]));
 
 // Register HttpClient
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
@@ -74,9 +107,7 @@ app.UseHttpsRedirection();
 app.MapControllers();
 app.UseStaticFiles();
 app.UseRouting();
-// app.UseEndpoints(endpoints =>
-// {
-//     endpoints.MapControllers();
-// });
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();

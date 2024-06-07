@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using HotelBookingSystem.Models;
 
 namespace HotelBookingSystem.Services
 {
@@ -8,7 +9,7 @@ namespace HotelBookingSystem.Services
         Task<IEnumerable<HotelDto>> GetAllHotels();
         Task<HotelDto> GetHotelById(int id);
         Task DeleteHotel(int id);
-        Task AddHotel(HotelCreateDto hotelCreateDto);
+        Task AddHotel(Hotel hotel);
 
         Task<IEnumerable<HotelDto>> GetAllHotelsOrderedByRating();
         Task<IEnumerable<HotelDto>> GetAllHotelsOrderedByAvailableRooms();
