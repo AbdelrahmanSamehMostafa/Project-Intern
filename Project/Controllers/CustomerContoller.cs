@@ -13,17 +13,19 @@ namespace HotelBookingSystem.Controllers
     public class CustomerContoller : ControllerBase
     {
         private ICustomerRepository _customerRepository;
+        private IHotelRepository _hotelRepository;
         private IMapper _mapper;
         private readonly IEmailService _emailService;
         private readonly IMemoryCache _memoryCache;
         private readonly ILogger<CustomerContoller> _logger;
-        public CustomerContoller(ICustomerRepository customerRepository, IMapper mapper, IEmailService emailService, IMemoryCache memoryCache, ILogger<CustomerContoller> logger)
+        public CustomerContoller(ICustomerRepository customerRepository, IMapper mapper, IEmailService emailService, IMemoryCache memoryCache, IHotelRepository hotelRepository, ILogger<CustomerContoller> logger)
         {
             _customerRepository = customerRepository;
             _mapper = mapper;
             _emailService = emailService;
             _memoryCache = memoryCache;
             _logger = logger;
+            _hotelRepository = hotelRepository;
         }
 
         [HttpGet]
@@ -174,6 +176,81 @@ namespace HotelBookingSystem.Controllers
             return NoContent();
         }
 
+        [HttpGet("{customerId}/hotels")]
+        public async Task<IActionResult> GetCustomerWishlists(int customerId)
+        {
+            var customer = await _customerRepository.GetCustomerByIdAsync(customerId);
+            if (customer == null)
+            {
+                return NotFound("Customer not found.");
+            }
+
+            // Get hotels based on the list of hotel IDs in customer's wishlist
+            var hotelsInWishlist = await _hotelRepository.GetHotelsByIdsAsync(customer.Wishlists);
+            if (hotelsInWishlist == null || !hotelsInWishlist.Any())
+            {
+                return NotFound("No hotels found in customer's wishlist.");
+            }
+
+            var hotelDTOs = hotelsInWishlist.Select(hotel => _mapper.Map<HotelDto>(hotel)).ToList();
+            return Ok(hotelDTOs);
+        }
+
+        [HttpPost("{customerId}/hotels/{hotelId}")]
+        public async Task<IActionResult> AddHotelToCustomerWishlist(int customerId, int hotelId)
+        {
+            var customer = await _customerRepository.GetCustomerByIdAsync(customerId);
+            if (customer == null)
+            {
+                return NotFound("Customer not found.");
+            }
+
+            // Add hotel ID to customer's wishlist
+            if (customer.Wishlists == null)
+            {
+                customer.Wishlists = new List<string>();
+            }
+            customer.Wishlists.Add(hotelId.ToString());
+
+            // Update customer in the repository
+            await _customerRepository.UpdateCustomerAsync(customer);
+
+            return Ok($"Hotel with ID {hotelId} added to customer's wishlist.");
+        }
+        
+        [HttpDelete("{customerId}/hotels/{hotelId}")]
+        public async Task<IActionResult> RemoveHotelFromWishlist(int customerId, int hotelId)
+        {
+            var customer = await _customerRepository.GetCustomerByIdAsync(customerId);
+            if (customer == null)
+            {
+                _logger.LogWarning($"Customer with ID {customerId} not found.");
+                return NotFound("Customer not found.");
+            }
+
+            // Check if the hotel is in the customer's wishlist
+            if (customer.Wishlists == null || !customer.Wishlists.Contains(hotelId.ToString()))
+            {
+                _logger.LogWarning($"Hotel with ID {hotelId} not found in customer's wishlist.");
+                return NotFound("Hotel not found in customer's wishlist.");
+            }
+
+            // Remove hotel ID from customer's wishlist
+            customer.Wishlists.Remove(hotelId.ToString());
+
+            // Update customer in the repository
+            try
+            {
+                await _customerRepository.UpdateCustomerAsync(customer);
+                _logger.LogInformation($"Hotel with ID {hotelId} removed from customer's wishlist successfully.");
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error removing hotel with ID {hotelId} from customer's wishlist: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
+        }
 
     }
 }

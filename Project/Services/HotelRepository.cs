@@ -51,9 +51,25 @@ namespace HotelBookingSystem.Services
 
         public async Task<HotelDto> GetHotelById(int id)
         {
-            var hotel = await _dbContext.Hotels.FirstOrDefaultAsync(h => h.HotelId == id);
+            var hotel = await _dbContext.Hotels
+                .Include(h => h.Address)
+                .FirstOrDefaultAsync(h => h.HotelId == id);
+
             return _mapper.Map<HotelDto>(hotel);
         }
+        public async Task<IEnumerable<Hotel>> GetHotelsByIdsAsync(IEnumerable<string> hotelIds)
+        {
+
+            var ids = hotelIds.Select(id => int.Parse(id)).ToList();
+
+
+            var hotels = await _dbContext.Hotels
+                .Where(h => ids.Contains(h.HotelId))
+                .ToListAsync();
+
+            return hotels;
+        }
+
 
         public async Task DeleteHotel(int id)
         {

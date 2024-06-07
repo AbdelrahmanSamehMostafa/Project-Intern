@@ -67,7 +67,8 @@ public class ApplicationDbContext : DbContext
                 FirstName = "Eslam",
                 LastName = "Waleed",
                 Email = "eslam.waleed@gmail.com",
-                Password = "password123"
+                Password = "password123",
+                Wishlists = new List<string> { "1", "2", "3" },
             },
             new Customer
             {
@@ -75,7 +76,8 @@ public class ApplicationDbContext : DbContext
                 FirstName = "Abdelrahman",
                 LastName = "Sameh",
                 Email = "abdelrahman.sameh@gmail.com",
-                Password = "password123"
+                Password = "password123",
+                Wishlists = new List<string> { "1", "2" },
             }
         );
 

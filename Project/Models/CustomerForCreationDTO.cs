@@ -18,5 +18,7 @@ namespace HotelBookingSystem.Models
         public string Email { get; set; }
 
         public string Password { get; set; }
+
+        public List<String> Wishlists { get; set; }
     }
 }

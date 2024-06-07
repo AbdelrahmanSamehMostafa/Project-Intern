@@ -24,6 +24,7 @@ public class Customer
     [Required]
     [MinLength(8)]
     public string Password { get; set; }
+    public List<String> Wishlists { get; set; }
 
     public bool IsEmailVerified { get; set; }
 
