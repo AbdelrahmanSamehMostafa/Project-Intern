@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using HotelBookingSystem.Services;
 using AutoMapper;
+using HotelBookingSystem.Models;
 
 namespace HotelBookingSystem.Controllers
 {
@@ -63,14 +64,12 @@ namespace HotelBookingSystem.Controllers
             var hotel = await _hotelRepo.GetHotelById(id);
             if (hotel == null)
             {
-                return NotFound(); // Hotel with the given id not found
+                return NotFound();
             }
             await _hotelRepo.DeleteHotel(id);
-            return NoContent(); // Hotel successfully deleted
+            return NoContent();
         }
 
-       
-       
         [HttpPost]
         public async Task<IActionResult> AddHotel(HotelCreateDto simpleHotelCreateDto)
         {
@@ -78,12 +77,12 @@ namespace HotelBookingSystem.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
-            var hotelCreateDto = _mapper.Map<HotelCreateDto>(simpleHotelCreateDto);
-            
-            await _hotelRepo.AddHotel(hotelCreateDto);
 
-            return StatusCode(201); 
+            var hotelToCreate = _mapper.Map<Hotel>(simpleHotelCreateDto);
+
+            await _hotelRepo.AddHotel(hotelToCreate);
+
+            return StatusCode(201);
         }
 
         [HttpPut("{id}")]
@@ -102,7 +101,7 @@ namespace HotelBookingSystem.Controllers
 
             await _hotelRepo.UpdateHotel(id, hotelUpdateDto);
 
-            return NoContent(); // Hotel successfully updated
+            return NoContent();
         }
     }
 }

@@ -3,7 +3,7 @@ using HotelBookingSystem.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using HotelBookingSystem.Data.Models;
+using HotelBookingSystem.Models;
 using HotelBookingSystem.Services;
 
 namespace HotelBookingSystem.Controllers
@@ -50,19 +50,6 @@ namespace HotelBookingSystem.Controllers
             return Ok(customerDtoToReturn);
         }
 
-
-
-
-
-        // [HttpPost]
-        // public async Task<ActionResult<CustomerDTO>> CreateCustomer(CustomerForCreationDTO customer)
-        // {
-        //     var customerEntity = _mapper.Map<Customer>(customer);
-        //     await _customerRepository.CreateCustomerAsync(customerEntity);
-
-        //     var customerToReturn = _mapper.Map<CustomerDTO>(customer);
-        //     return CreatedAtRoute("GetCustomerById", new { customerId = customerToReturn.CustomerId }, customerToReturn);
-        // }
 
         [HttpPost]
         public async Task<ActionResult<CustomerDTO>> CreateCustomer(CustomerForCreationDTO customerDto)

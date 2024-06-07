@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HotelBookingSystem.Data.Models;
+using HotelBookingSystem.Models;
 
 namespace HotelBookingSystem.Services
 {
@@ -21,31 +21,31 @@ namespace HotelBookingSystem.Services
 
         public async Task<IEnumerable<HotelDto>> GetAllHotelsOrderedByRating()
         {
-            var hotels = await _dbContext.Hotels.OrderByDescending(h => h.Rating).ToListAsync();
+            var hotels = await _dbContext.Hotels.Include(h => h.Address).OrderByDescending(h => h.Rating).ToListAsync();
             return _mapper.Map<IEnumerable<HotelDto>>(hotels);
         }
 
         public async Task<IEnumerable<HotelDto>> GetAllHotelsOrderedByAvailableRooms()
         {
-            var hotels = await _dbContext.Hotels.OrderByDescending(h => h.NumberOfAvailableRooms).ToListAsync();
+            var hotels = await _dbContext.Hotels.Include(h => h.Address).OrderByDescending(h => h.NumberOfAvailableRooms).ToListAsync();
             return _mapper.Map<IEnumerable<HotelDto>>(hotels);
         }
 
         public async Task<IEnumerable<HotelDto>> GetAllHotelsOrderedByAddress()
         {
-            var hotels = await _dbContext.Hotels.OrderBy(h => h.Address).ToListAsync();
+            var hotels = await _dbContext.Hotels.Include(h => h.Address).OrderBy(h => h.Address).ToListAsync();
             return _mapper.Map<IEnumerable<HotelDto>>(hotels);
         }
 
         public async Task<IEnumerable<HotelDto>> GetAllHotelsOrderedByName()
         {
-            var hotels = await _dbContext.Hotels.OrderBy(h => h.Name).ToListAsync();
+            var hotels = await _dbContext.Hotels.Include(h => h.Address).OrderBy(h => h.Name).ToListAsync();
             return _mapper.Map<IEnumerable<HotelDto>>(hotels);
         }
 
         public async Task<IEnumerable<HotelDto>> GetAllHotels()
         {
-            var hotels = await _dbContext.Hotels.ToListAsync();
+            var hotels = await _dbContext.Hotels.Include(h => h.Address).ToListAsync();
             return _mapper.Map<IEnumerable<HotelDto>>(hotels);
         }
 
@@ -64,14 +64,13 @@ namespace HotelBookingSystem.Services
                 await _dbContext.SaveChangesAsync();
             }
         }
-        public async Task AddHotel(HotelCreateDto hotelCreateDto)
-        {
-            if (hotelCreateDto == null)
-            {
-                throw new ArgumentNullException(nameof(hotelCreateDto));
-            }
 
-            var hotel = _mapper.Map<Hotel>(hotelCreateDto);
+        public async Task AddHotel(Hotel hotel)
+        {
+            if (hotel == null)
+            {
+                throw new ArgumentNullException(nameof(hotel));
+            }
 
             _dbContext.Hotels.Add(hotel);
 

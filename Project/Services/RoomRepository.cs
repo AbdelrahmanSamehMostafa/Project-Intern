@@ -1,4 +1,4 @@
-using HotelBookingSystem.Data.Models;
+using HotelBookingSystem.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelBookingSystem.Services

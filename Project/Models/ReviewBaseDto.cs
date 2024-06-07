@@ -1,4 +1,4 @@
-namespace HotelBookingSystem.Data.Models
+namespace HotelBookingSystem.Models
 {
     public class ReviewBaseDto
     {

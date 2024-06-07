@@ -1,7 +1,7 @@
 using AutoMapper;
-using HotelBookingSystem.Data.Models;
-using HotelBookingSystem.Services;
 using Microsoft.AspNetCore.Mvc;
+using HotelBookingSystem.Models;
+using HotelBookingSystem.Services;
 
 namespace HotelBookingSystem.Controllers
 {
@@ -11,8 +11,7 @@ namespace HotelBookingSystem.Controllers
     {
         private readonly IAddressRepository _addressRepository;
         private readonly IMapper _mapper;
-        
-        
+
         public AddressController(IAddressRepository addressRepository, IMapper mapper)
         {
             _addressRepository = addressRepository;
@@ -23,15 +22,10 @@ namespace HotelBookingSystem.Controllers
         public async Task<IActionResult> GetAllAddresses()
         {
             var addresses = await _addressRepository.GetAllAddressesAsync();
-            // if (addresses == null)
-            // {
-            //     return NotFound();
-            // }
-            return Ok(_mapper.Map<IEnumerable<AddressWithHotelNameDTO>>(addresses));
+            return Ok(_mapper.Map<IEnumerable<AddressBaseDTO>>(addresses));
         }
 
-        [HttpGet]
-        [Route("{addressId}", Name = "GetAddressById")]
+        [HttpGet("{addressId}", Name = "GetAddressById")]
         public async Task<IActionResult> GetAddressById(int addressId)
         {
             var address = await _addressRepository.GetAddressByIdAsync(addressId);
@@ -39,48 +33,33 @@ namespace HotelBookingSystem.Controllers
             {
                 return NotFound();
             }
-            return Ok(_mapper.Map<AddressWithHotelNameDTO>(address));
+            return Ok(_mapper.Map<AddressBaseDTO>(address));
         }
 
         [HttpPost]
-        [Route("{HotelId}")]
-        public async Task<IActionResult> CreateAddress(int HotelId, [FromBody] AddressForCreationDTO addressdto)
+        public async Task<IActionResult> CreateAddress(AddressBaseDTO addressdto)
         {
-            // comment this check until we implement the hotel repository
-            // if(!await _hotelRepository.HotelExistsAsync(HotelId))
-            //     return NotFound();
-
             var addressEntity = _mapper.Map<Address>(addressdto);
-            addressEntity.HotelId = HotelId;
-
             await _addressRepository.CreateAddressAsync(addressEntity);
 
-            var addressToReturn = _mapper.Map<AddressWithIdDTO>(addressEntity);
-            return CreatedAtRoute("GetAddressById", new { addressId = addressToReturn.Id }, addressToReturn);
+            return StatusCode(201);
         }
 
-        [HttpPut]
-        [Route("{addressId}")]
-        public async Task<IActionResult> UpdateAddress(int addressId, [FromBody] AddressWithIdDTO addressWithId)
+
+        [HttpPut("{addressId}")]
+        public async Task<IActionResult> UpdateAddress(int addressId, AddressBaseDTO addressBaseDTO)
         {
             var address = await _addressRepository.GetAddressByIdAsync(addressId);
             if (address == null)
             {
                 return NotFound();
             }
-
-            if(addressId != addressWithId.Id)
-                return BadRequest();
-
-            _mapper.Map(addressWithId, address);
-
+            _mapper.Map(addressBaseDTO, address);
             await _addressRepository.UpdateAddressAsync(address);
-
             return NoContent();
         }
 
-        [HttpDelete]
-        [Route("{addressId}")]
+        [HttpDelete("{addressId}")]
         public async Task<IActionResult> DeleteAddress(int addressId)
         {
             if (!await _addressRepository.AddressExistsAsync(addressId))
@@ -91,8 +70,5 @@ namespace HotelBookingSystem.Controllers
             await _addressRepository.DeleteAddressAsync(addressId);
             return NoContent();
         }
-
-
     }
-
 }
