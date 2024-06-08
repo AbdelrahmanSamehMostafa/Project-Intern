@@ -12,6 +12,8 @@ namespace HotelBookingSystem.Profiles
             CreateMap<Review, ReviewDTO>();
             CreateMap<Review, ReviewWithIdDTO>();   
             CreateMap<ReviewWithIdDTO, Review>();
+            CreateMap<ReviewWithHotelIdDTO, Review>();
+            CreateMap<Review, ReviewWithHotelIdDTO>();
         }
     }
 }

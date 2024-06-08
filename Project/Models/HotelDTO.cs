@@ -12,8 +12,7 @@ namespace HotelBookingSystem.Models
         public Address? Address { get; set; }
         public List<string>? Entertainments { get; set; }
         public List<string>? ImageUrls { get; set; }
-        // Other relevant properties...
+        public double averageRating { get; set; } = 0;
 
-        // Optionally, you might include additional calculated properties or methods here
     }
 }

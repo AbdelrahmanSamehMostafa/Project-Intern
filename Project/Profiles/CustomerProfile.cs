@@ -11,8 +11,8 @@ namespace HotelBookingSystem.Profiles
     {
         public CustomerProfile()
         {
-            CreateMap<Customer, CustomerDTO>().ForMember(dest => dest.Name,
-                opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
+            CreateMap<Customer, CustomerDTO>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
 
             CreateMap<CustomerForCreationDTO, Customer>()
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
@@ -24,15 +24,29 @@ namespace HotelBookingSystem.Profiles
             CreateMap<CustomerDTO, Customer>()
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => ExtractFirstName(src.Name)))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => ExtractLastName(src.Name)));
+
+            CreateMap<CustomerForUpdateDTO, Customer>()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => ExtractFirstName(src.Name)))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => ExtractLastName(src.Name)));
+
+            // Handle cases where fullName might not be in the expected format
+            CreateMap<CustomerForUpdateDTO, Customer>()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => ExtractFirstName(src.Name)))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => ExtractLastName(src.Name)))
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => ExtractFirstName(src.Name) ?? ""))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => ExtractLastName(src.Name) ?? ""));
         }
+
         private string ExtractFirstName(string fullName)
         {
-            return fullName.Split(' ')[0];
+            return fullName?.Split(' ')[0];
         }
 
         private string ExtractLastName(string fullName)
         {
-            return fullName.Split(' ')[1];
+            var splitName = fullName?.Split(' ');
+            return splitName != null && splitName.Length > 1 ? splitName[1] : "";
         }
     }
+
 }

@@ -78,6 +78,15 @@ public class ApplicationDbContext : DbContext
                 Email = "abdelrahman.sameh@gmail.com",
                 Password = "password123",
                 Wishlists = new List<string> { "1", "2" },
+            },
+            new Customer
+            {
+                CustomerId = 3,
+                FirstName = "Ahmed",
+                LastName = "Mohamed",
+                Email = "Ahmed.Mohamed@gmail.com",
+                Password = "password123",
+                Wishlists = new List<string> { "4", "5" },
             }
         );
 
@@ -89,6 +98,7 @@ public class ApplicationDbContext : DbContext
                 AdminId = 1,
                 Name = "Nile Palace Hotel",
                 Rating = 4,
+                averageRating = 5,
                 TotalNumberOfRooms = 150,
                 NumberOfAvailableRooms = 120,
                 ContactInfo = "0987654321",
@@ -110,6 +120,7 @@ public class ApplicationDbContext : DbContext
                 AdminId = 1,
                 Name = "Pyramids View Hotel",
                 Rating = 4.5,
+                averageRating = 0,
                 TotalNumberOfRooms = 200,
                 NumberOfAvailableRooms = 180,
                 ContactInfo = "1112223333",
@@ -131,6 +142,7 @@ public class ApplicationDbContext : DbContext
                 Name = "Solymar Soma Beach",
                 Rating = 3.5,
                 TotalNumberOfRooms = 120,
+                averageRating = 0,
                 NumberOfAvailableRooms = 100,
                 ContactInfo = "4445556666",
                 AddressId = 3,
@@ -149,6 +161,7 @@ public class ApplicationDbContext : DbContext
                 AdminId = 2,
                 Name = "Pyramisa Hotel Luxor",
                 Rating = 4,
+                averageRating = 0,
                 TotalNumberOfRooms = 180,
                 NumberOfAvailableRooms = 150,
                 ContactInfo = "7778889999",
@@ -169,6 +182,7 @@ public class ApplicationDbContext : DbContext
                 AdminId = 2,
                 Name = "Kato Dool Wellness Aswan Resort",
                 Rating = 3.5,
+                averageRating = 0,
                 TotalNumberOfRooms = 100,
                 NumberOfAvailableRooms = 80,
                 ContactInfo = "9990001111",
@@ -191,11 +205,12 @@ public class ApplicationDbContext : DbContext
                 AdminId = 1,
                 Name = "Davinci Beach Hotel",
                 Rating = 6,
+                averageRating = 0,
                 TotalNumberOfRooms = 90,
                 NumberOfAvailableRooms = 50,
                 ContactInfo = "9990001111",
                 AddressId = 6,
-                Entertainments = new List<string> { "Pool", "Spa", "Cinema" ,"Gym"},
+                Entertainments = new List<string> { "Pool", "Spa", "Cinema", "Gym" },
                 Description = "Relax and unwind at the serene Aswan Retreat.",
                 ImageUrls = new List<string>
                 {
@@ -212,17 +227,64 @@ public class ApplicationDbContext : DbContext
                 AdminId = 2,
                 Name = "Ghazala Gardens",
                 Rating = 5,
+                averageRating = 0,
                 TotalNumberOfRooms = 190,
                 NumberOfAvailableRooms = 180,
                 ContactInfo = "9990001111",
                 AddressId = 7,
-                Entertainments = new List<string> { "Pool", "Spa", "Nile Cruise" ,"Gym"},
+                Entertainments = new List<string> { "Pool", "Spa", "Nile Cruise", "Gym" },
                 Description = "Relax and unwind at the serene Aswan Retreat.",
                 ImageUrls = new List<string>
                 {
                     "https://cf.bstatic.com/xdata/images/hotel/max1024x768/476642414.jpg?k=b299afe8fb788d2f07ed8d455d2a5ee108b7aa9d1dd158bce7f6e8594b6b23da&o=&hp=1",
                     "https://cf.bstatic.com/xdata/images/hotel/max1024x768/469282264.jpg?k=ffbb57a1619377bfc2d9798bef37560a69c95c430c1c212163862f7ca1fb322d&o=&hp=1",
                     "https://cf.bstatic.com/xdata/images/hotel/max1024x768/476642883.jpg?k=0829695a81fb80a84ef6351e0b2d0e65650de7c2e8b53612c4f28f15c5e737a3&o=&hp=1",
+                },
+                IsActive = true
+            },
+            new Hotel
+            {
+                HotelId = 8,
+                AdminId = 2,
+                Name = "Lasirena Mini Egypt",
+                Rating = 4.2,
+                averageRating = 0,
+                TotalNumberOfRooms = 110,
+                NumberOfAvailableRooms = 40,
+                ContactInfo = "9990001111",
+                AddressId = 8,
+                Entertainments = new List<string> { "Pool", "Spa", "Cinema", "Gym", "Beach" },
+                Description = "Relax and unwind at the serene Aswan Retreat.",
+                ImageUrls = new List<string>
+                {
+                    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/549114940.jpg?k=9797a229e13a6051352066b66ffd1ec6ba1b72e98491a49cff2e2355f643ed8a&o=&hp=1",
+                    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/549114935.jpg?k=8babd6e32091e5b4cf72d6a3d841c5d4657c5313f5d5e0edee64dc84f89598c5&o=&hp=1",
+                    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/549114978.jpg?k=3e81221800f42cf658213d7fcf2f70d9fdbf2f2e92d3db1d753ff90b39b605fa&o=&hp=1",
+                    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/549114996.jpg?k=ecb0e70288f4faba4fde7587f319c4c67729a59bdbfce6eb0596ac50c8127ad9&o=&hp=1",
+                    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/549114877.jpg?k=972b540ac1e6a145d237c70de8774911874a9ab5dff26165ee607352866f9fef&o=&hp=1",
+                },
+                IsActive = true
+            },
+            new Hotel
+            {
+                HotelId = 9,
+                AdminId = 1,
+                Name = "Nozha Beach",
+                Rating = 6.7,
+                averageRating = 0,
+                TotalNumberOfRooms = 130,
+                NumberOfAvailableRooms = 70,
+                ContactInfo = "9990001111",
+                AddressId = 9,
+                Entertainments = new List<string> { "Pool", "Cinema", "Gym", "Beach" },
+                Description = "Relax and unwind at the serene Aswan Retreat.",
+                ImageUrls = new List<string>
+                {
+                    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/535840098.jpg?k=79166f7ca744f0c6d60d45a1133ee53e383c91821ceb2da87fc20039ed86cfa9&o=&hp=1",
+                    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/541431499.jpg?k=5b0997797e626a7a60b30ff4af5a48bfd31b04946cf03e40634e2b4af9a7a998&o=&hp=1",
+                    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/541433214.jpg?k=7eb3ed246be88900fc95b3113c9d38fcb0c3bc1bae863e7d6938e14dfd84b5b2&o=&hp=1",
+                    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/542945965.jpg?k=4d8266ddb1c72ea2167c67fe11b88f98e5c914e817ce7cfc09b0be941128c0bd&o=&hp=1",
+                    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/541251754.jpg?k=0229dc6a0187d48f92635e7a14d1ba1e1c90b42affee2128ee0fea8051a60960&o=&hp=1",
                 },
                 IsActive = true
             }
@@ -247,19 +309,19 @@ public class ApplicationDbContext : DbContext
             new Address
             {
                 AddressId = 3,
-                City = "Alex",
+                City = "Hurghada",
                 Country = "Egypt",
             },
             new Address
             {
                 AddressId = 4,
-                City = "Aswan",
+                City = "Luxor",
                 Country = "Egypt",
             },
             new Address
             {
                 AddressId = 5,
-                City = "Faiyum",
+                City = "Aswan",
                 Country = "Egypt",
             },
             new Address
@@ -267,13 +329,26 @@ public class ApplicationDbContext : DbContext
                 AddressId = 6,
                 City = "Hurghada",
                 Country = "Egypt",
-            }, 
+            },
             new Address
             {
                 AddressId = 7,
                 City = "Sharm ElSheikh",
                 Country = "Egypt",
+            },
+            new Address
+            {
+                AddressId = 8,
+                City = "Ain Sokhna",
+                Country = "Egypt",
+            },
+            new Address
+            {
+                AddressId = 9,
+                City = "Ras Sedr",
+                Country = "Egypt",
             }
+
 
 
         );
@@ -304,8 +379,16 @@ public class ApplicationDbContext : DbContext
             {
                 ReviewId = 1,
                 Comment = "Great stay!",
-                Rating = 5,
+                Rating = 8,
                 CustomerId = 1,
+                HotelId = 1
+            },
+            new Review
+            {
+                ReviewId = 2,
+                Comment = "Bad Service...",
+                Rating = 2,
+                CustomerId = 2,
                 HotelId = 1
             }
         );

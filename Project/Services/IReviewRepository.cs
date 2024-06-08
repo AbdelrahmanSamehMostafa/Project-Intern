@@ -10,5 +10,7 @@ namespace HotelBookingSystem.Services
         public Task CreateReviewAsync(Review review);
         public Task UpdateReviewAsync(Review review);
         public Task DeleteReviewAsync(int reviewId);
+        public Task<IEnumerable<Review>> GetReviewsByHotelIdAsync(int hotelId); 
+        public Task<IEnumerable<Review>> GetReviewsByCustomerIdAsync(int customerId);
     }
 }

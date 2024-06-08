@@ -45,5 +45,6 @@ public class Hotel
     public List<string>? ImageUrls { get; set; }
     public List<Review>? Reviews { get; set; }
 
+    public double averageRating { get; set; } = 0;
     public bool IsActive { get; set; }
 }

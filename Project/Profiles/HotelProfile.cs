@@ -10,6 +10,7 @@ namespace HotelBookingSystem.Profiles
         {
             CreateMap<Hotel, HotelDto>();
             CreateMap<HotelCreateDto, Hotel>();
+            CreateMap<HotelDto, HotelUpdateDto>();
             CreateMap<HotelUpdateDto, Hotel>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }

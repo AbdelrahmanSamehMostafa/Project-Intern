@@ -151,17 +151,13 @@ namespace HotelBookingSystem.Controllers
         }
 
         [HttpPut("{customerId}")]
-        public async Task<IActionResult> UpdateCustomer(int customerId, CustomerDTO customerDTO)
+        public async Task<IActionResult> UpdateCustomer(int customerId, CustomerForUpdateDTO customer)
         {
-            if (customerId != customerDTO.CustomerId)
-            {
-                return BadRequest();
-            }
 
             var existingCustomer = await _customerRepository.GetCustomerByIdAsync(customerId);
 
             // Map properties from customerDTO to existingCustomer
-            _mapper.Map(customerDTO, existingCustomer);
+            _mapper.Map(customer, existingCustomer);
 
             // Update the customer in the repository
             await _customerRepository.UpdateCustomerAsync(existingCustomer);
@@ -217,7 +213,7 @@ namespace HotelBookingSystem.Controllers
 
             return Ok($"Hotel with ID {hotelId} added to customer's wishlist.");
         }
-        
+
         [HttpDelete("{customerId}/hotels/{hotelId}")]
         public async Task<IActionResult> RemoveHotelFromWishlist(int customerId, int hotelId)
         {

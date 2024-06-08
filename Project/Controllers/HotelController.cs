@@ -21,27 +21,34 @@ namespace HotelBookingSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllHotels(string? orderBy = "")
+        public async Task<IActionResult> GetAllHotels(string? orderBy = "", string? filter = "")
         {
             IEnumerable<HotelDto> hotels;
 
-            switch (orderBy.ToLower())
+            if (!string.IsNullOrEmpty(filter))
             {
-                case "rating":
-                    hotels = await _hotelRepo.GetAllHotelsOrderedByRating();
-                    break;
-                case "availablerooms":
-                    hotels = await _hotelRepo.GetAllHotelsOrderedByAvailableRooms();
-                    break;
-                case "address":
-                    hotels = await _hotelRepo.GetAllHotelsOrderedByAddress();
-                    break;
-                case "name":
-                    hotels = await _hotelRepo.GetAllHotelsOrderedByName();
-                    break;
-                default:
-                    hotels = await _hotelRepo.GetAllHotels();
-                    break;
+                hotels = await _hotelRepo.GetFilteredHotels(filter);
+            }
+            else
+            {
+                switch (orderBy.ToLower())
+                {
+                    case "rating":
+                        hotels = await _hotelRepo.GetAllHotelsOrderedByRating();
+                        break;
+                    case "availablerooms":
+                        hotels = await _hotelRepo.GetAllHotelsOrderedByAvailableRooms();
+                        break;
+                    case "address":
+                        hotels = await _hotelRepo.GetAllHotelsOrderedByAddress();
+                        break;
+                    case "name":
+                        hotels = await _hotelRepo.GetAllHotelsOrderedByName();
+                        break;
+                    default:
+                        hotels = await _hotelRepo.GetAllHotels();
+                        break;
+                }
             }
 
             return Ok(hotels);

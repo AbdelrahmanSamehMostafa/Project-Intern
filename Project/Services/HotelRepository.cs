@@ -65,6 +65,7 @@ namespace HotelBookingSystem.Services
 
             var hotels = await _dbContext.Hotels
                 .Where(h => ids.Contains(h.HotelId))
+                .Include(h => h.Address)
                 .ToListAsync();
 
             return hotels;
@@ -102,8 +103,21 @@ namespace HotelBookingSystem.Services
             }
 
             _mapper.Map(hotelUpdateDto, existingHotel);
+            _dbContext.Hotels.Update(existingHotel);
 
             await _dbContext.SaveChangesAsync();
+        }
+        public async Task<IEnumerable<HotelDto>> GetFilteredHotels(string filter)
+        {
+            var hotels = await _dbContext.Hotels
+                .Include(h => h.Address)
+                .Where(h => h.Name.Contains(filter) || h.Description.Contains(filter))
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<HotelDto>>(hotels);
+        }
+        public async Task<bool> HotelExistsAsync(int id)
+        {
+            return await _dbContext.Hotels.AnyAsync(c => c.HotelId == id);
         }
     }
 }

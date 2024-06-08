@@ -33,6 +33,7 @@ namespace HotelBookingSystem.Models
         public AddressBaseDTO Address { get; set; }
 
         public List<string>? ImageUrls { get; set; }
+        public double averageRating { get; set; } = 0;
     }
 
 

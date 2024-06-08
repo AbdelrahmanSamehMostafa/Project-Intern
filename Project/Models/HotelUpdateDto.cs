@@ -23,5 +23,7 @@ namespace HotelBookingSystem.Models
         public List<string>? Entertainments { get; set; }
 
         public List<string>? ImageUrls { get; set; }
+        public double averageRating { get; set; }
+        public double Rating { get; set; }
     }
 }

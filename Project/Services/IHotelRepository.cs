@@ -17,5 +17,7 @@ namespace HotelBookingSystem.Services
         Task<IEnumerable<HotelDto>> GetAllHotelsOrderedByName();
         Task<IEnumerable<Hotel>> GetHotelsByIdsAsync(IEnumerable<string> hotelIds);
         Task UpdateHotel(int id, HotelUpdateDto hotelUpdateDto);
+        Task<IEnumerable<HotelDto>> GetFilteredHotels(string filter);
+        Task<bool> HotelExistsAsync(int id);
     }
 }
