@@ -24,6 +24,7 @@ class CustomerHomePageState extends State<CustomerHomePage> {
   late List<Hotel> hotels = []; // List to store fetched hotels
   late List<Hotel> filteredHotels = []; // List to store filtered hotels
   String searchQuery = '';
+  String selectedSortOption = 'none'; // Default sorting option
 
   @override
   void initState() {
@@ -31,8 +32,8 @@ class CustomerHomePageState extends State<CustomerHomePage> {
     fetchHotels();
   }
 
-  Future<void> fetchHotels() async {
-    final url = Uri.parse('http://localhost:5187/api/Hotel');
+  Future<void> fetchHotels({String orderBy = ''}) async {
+    final url = Uri.parse('http://localhost:5187/api/Hotel?orderBy=$orderBy');
 
     try {
       final response = await http.get(url);
@@ -59,7 +60,7 @@ class CustomerHomePageState extends State<CustomerHomePage> {
   }
 
   void navigateToMyAccount() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const CustomerAccountInfo()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerAccountInfo(custId: widget.custId)));
   }
 
   void navigateToBookingHistory() {
@@ -67,7 +68,7 @@ class CustomerHomePageState extends State<CustomerHomePage> {
   }
 
   void navigateToReviewHistory() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const CustomerReviewHistory()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerReviewHistory(custId: widget.custId)));
   }
 
   void navigateToWishlist() {
@@ -75,7 +76,7 @@ class CustomerHomePageState extends State<CustomerHomePage> {
   }
 
   void navigateToHotelDetails(Hotel hotel) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerViewHotelDetails(hotel: hotel)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerViewHotelDetails(hotel: hotel, custId: widget.custId)));
   }
 
   void updateSearchQuery(String query) {
@@ -119,9 +120,18 @@ class CustomerHomePageState extends State<CustomerHomePage> {
               style: TextStyle(color: Colors.white),
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.exit_to_app),
+          TextButton(
             onPressed: () => _signOut(context),
+            child: const Row(
+              children: [
+                Icon(Icons.logout, color: Colors.white),
+                SizedBox(width: 5),
+                Text(
+                  'Logout',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -181,20 +191,54 @@ class CustomerHomePageState extends State<CustomerHomePage> {
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: TextField(
-              onChanged: updateSearchQuery,
-              style: const TextStyle(color: Colors.black),
-              decoration: InputDecoration(
-                hintText: 'Search hotels...',
-                hintStyle: const TextStyle(color: Colors.black54),
-                filled: true,
-                fillColor: Colors.grey[300],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide.none,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    onChanged: updateSearchQuery,
+                    style: const TextStyle(color: Colors.black),
+                    decoration: InputDecoration(
+                      hintText: 'Search hotels...',
+                      hintStyle: const TextStyle(color: Colors.black54),
+                      filled: true,
+                      fillColor: Colors.grey[300],
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      prefixIcon: const Icon(Icons.search, color: Colors.black),
+                    ),
+                  ),
                 ),
-                prefixIcon: const Icon(Icons.search, color: Colors.black),
-              ),
+                const SizedBox(width: 10),
+                const Text(
+                  "OrderBy: ",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                DropdownButton<String>(
+                  value: selectedSortOption,
+                  icon: const Icon(Icons.sort, color: Colors.black),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedSortOption = newValue!;
+                      fetchHotels(orderBy: selectedSortOption);
+                    });
+                  },
+                  items: <String>['none', 'rating', 'availablerooms', 'address', 'name'].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value[0].toUpperCase() + value.substring(1),
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 20),

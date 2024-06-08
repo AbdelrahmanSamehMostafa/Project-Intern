@@ -8,13 +8,13 @@ import 'customer_view_hotel_details.dart';
 class CustomerWishlist extends StatefulWidget {
   final int customerId;
 
-  const CustomerWishlist({Key? key, required this.customerId}) : super(key: key);
+  const CustomerWishlist({super.key, required this.customerId});
 
   @override
-  _CustomerWishlistState createState() => _CustomerWishlistState();
+  CustomerWishlistState createState() => CustomerWishlistState();
 }
 
-class _CustomerWishlistState extends State<CustomerWishlist> {
+class CustomerWishlistState extends State<CustomerWishlist> {
   late List<Hotel> wishlistHotels = []; // List to store fetched wishlist hotels
 
   @override
@@ -50,7 +50,7 @@ class _CustomerWishlistState extends State<CustomerWishlist> {
   }
 
   void navigateToHotelDetails(Hotel hotel) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerViewHotelDetails(hotel: hotel)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerViewHotelDetails(hotel: hotel, custId: widget.customerId)));
   }
 
   @override

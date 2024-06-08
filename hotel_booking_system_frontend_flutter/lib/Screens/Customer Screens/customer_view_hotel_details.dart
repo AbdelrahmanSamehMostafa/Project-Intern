@@ -2,15 +2,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import 'package:hotel_booking_system_frontend_flutter/Model/hotel.dart';
-import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
+
 import 'package:url_launcher/url_launcher.dart';
 
 class CustomerViewHotelDetails extends StatefulWidget {
   final Hotel hotel;
+  final int custId;
 
-  const CustomerViewHotelDetails({Key? key, required this.hotel}) : super(key: key);
+  const CustomerViewHotelDetails({super.key, required this.hotel, required this.custId});
 
   @override
   _CustomerViewHotelDetailsState createState() => _CustomerViewHotelDetailsState();
@@ -23,6 +24,8 @@ class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
   int? humidity;
   double? windSpeed;
   final addressController = TextEditingController();
+  List<dynamic> reviews = []; // List to hold fetched reviews
+  double averageRating = 0.0;
 
   @override
   void initState() {
@@ -30,6 +33,29 @@ class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
     _carouselController = CarouselController();
     checkWishlistStatus(); // Check if hotel is in wishlist when widget initializes
     fetchWeatherData(); // Fetch weather data when widget initializes
+    fetchReviews(); // Fetch reviews when widget initializes
+  }
+
+  Future<void> fetchReviews() async {
+    final hotelId = widget.hotel.hotelId;
+    final Uri uri = Uri.parse('http://localhost:5187/api/Reviews/Hotel/$hotelId');
+
+    try {
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> fetchedData = jsonDecode(response.body);
+
+        setState(() {
+          reviews = fetchedData['reviews'];
+          averageRating = fetchedData['averageRating'];
+        });
+      } else {
+        print('Failed to fetch reviews. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching reviews: $e');
+    }
   }
 
   Future<void> checkWishlistStatus() async {
@@ -114,6 +140,55 @@ class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
     }
   }
 
+  String formatDateTime(String dateTimeString) {
+    DateTime dateTime = DateTime.parse(dateTimeString);
+    Duration difference = DateTime.now().difference(dateTime);
+
+    if (difference.inSeconds < 5) {
+      return 'just now';
+    } else if (difference.inMinutes < 1) {
+      return '${difference.inSeconds} seconds ago';
+    } else if (difference.inHours < 1) {
+      return '${difference.inMinutes} minutes ago';
+    } else if (difference.inDays < 1) {
+      return '${difference.inHours} hours ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} days ago';
+    } else {
+      int years = (difference.inDays / 365).floor();
+      return years <= 1 ? 'one year ago' : '$years years ago';
+    }
+  }
+
+  Future<void> submitReview(String comment, int rating) async {
+    final customerId = widget.custId;
+    final hotelId = widget.hotel.hotelId;
+
+    final Uri uri = Uri.parse('http://localhost:5187/api/Reviews/$customerId/$hotelId');
+
+    try {
+      final response = await http.post(
+        uri,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'comment': comment,
+          'rating': rating,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        // Refresh reviews and averageRating after successful submission
+        fetchReviews();
+      } else {
+        print('Failed to submit review. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error submitting review: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -161,7 +236,7 @@ class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
             const SizedBox(height: 20),
             Text(
               widget.hotel.name,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Row(
@@ -173,29 +248,6 @@ class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
                   style: const TextStyle(fontSize: 18),
                 ),
               ],
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: addressController,
-              decoration: const InputDecoration(
-                labelText: 'Address',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-              ),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 67, 84, 236),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              onPressed: generateRoute,
-              child: const Text("Generate Route", style: TextStyle(fontSize: 22)),
             ),
             const SizedBox(height: 10),
             Text(
@@ -237,8 +289,52 @@ class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
             ),
             const SizedBox(height: 5),
             Text(
-              ' ${widget.hotel.address.city}, ${widget.hotel.address.country} ' ?? 'No description available',
+              '${widget.hotel.address.city}, ${widget.hotel.address.country} ',
               style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              "Write your address to generate route to the hotel",
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontStyle: FontStyle.italic,
+                fontSize: 17,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                SizedBox(
+                  width: 600,
+                  height: 50,
+                  child: TextField(
+                    controller: addressController,
+                    decoration: const InputDecoration(
+                      labelText: 'Address',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                SizedBox(
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 67, 84, 236),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: generateRoute,
+                    child: const Text("Generate Route", style: TextStyle(fontSize: 22)),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             const Text(
@@ -360,6 +456,146 @@ class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
                 ],
               ),
             ),
+            if (reviews.isNotEmpty) ...[
+              const SizedBox(height: 20),
+              const Text(
+                'Reviews:',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              // Display reviews as cards
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: reviews.map((review) {
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 5),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Rating: ${review['rating']}/10',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(review['comment']),
+                          const SizedBox(height: 5),
+                          Text(
+                            'Posted ${formatDateTime(review['date'])}',
+                            style: const TextStyle(fontStyle: FontStyle.italic),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Icon(Icons.star, color: Colors.yellow[700]),
+                  const SizedBox(width: 5),
+                  Text(
+                    'Average Rating: ${averageRating.toStringAsFixed(1)}/10',
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ],
+              ),
+            ],
+            if (reviews.isEmpty) ...[
+              const SizedBox(height: 20),
+              const Text(
+                'Reviews:',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              const Row(
+                children: [
+                  //Icon(Icons.star, color: Colors.yellow[700]),
+                  SizedBox(width: 5),
+                  Text(
+                    'Unfortunately, No Reviews for his hotel..',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ],
+              ),
+            ],
+            const SizedBox(height: 15),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 67, 84, 236),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    String comment = '';
+                    int rating = 5; // Default rating
+
+                    return AlertDialog(
+                      title: const Text('Submit Review'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextField(
+                            onChanged: (value) {
+                              comment = value;
+                            },
+                            decoration: const InputDecoration(
+                              labelText: 'Comment',
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              const Text('Rating: '),
+                              DropdownButton<int>(
+                                value: rating,
+                                onChanged: (int? newValue) {
+                                  if (newValue != null) {
+                                    setState(() {
+                                      rating = newValue;
+                                    });
+                                  }
+                                },
+                                items: List.generate(10, (index) {
+                                  return DropdownMenuItem<int>(
+                                    value: index + 1,
+                                    child: Text((index + 1).toString()),
+                                  );
+                                }),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close dialog
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            // Perform submit logic here
+                            await submitReview(comment, rating);
+                            Navigator.of(context).pop(); // Close dialog
+                          },
+                          child: const Text('Submit'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: const Text('Add Your Review'),
+            ),
           ],
         ),
       ),
@@ -385,7 +621,8 @@ class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
   }
 
   void generateRoute() async {
-    String hotelName = widget.hotel.name;
+    String hotelName = "${widget.hotel.name} ${widget.hotel.address.city} ${widget.hotel.address.country}";
+    print(hotelName);
     String address = addressController.text;
 
     double hotelNameLatitude;
