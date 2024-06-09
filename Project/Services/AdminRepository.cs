@@ -24,12 +24,14 @@ namespace HotelBookingSystem.Services
         {
             return await _dbContext.Admins.Where(e => e.AdminId == adminId).FirstOrDefaultAsync();
         }
-        public async void CreateAdminReq(Admin admin){
-            var RequestToAdd=new PendingReq{
+        public async void CreateAdminRequest(Admin admin)
+        {
+            var RequestToAdd = new PendingReq
+            {
                 AdminID = admin.AdminId,
-                SuperAdminID=1
+                SuperAdminID = 1
             };
-             _dbContext.PendingReqs.Add(RequestToAdd);
+            _dbContext.PendingReqs.Add(RequestToAdd);
         }
 
         public async Task CreateAdminAsync(Admin admin)
@@ -40,9 +42,9 @@ namespace HotelBookingSystem.Services
             }
 
             _dbContext.Admins.Add(admin);
-            
+
             await _dbContext.SaveChangesAsync();
-            CreateAdminReq(admin);
+            CreateAdminRequest(admin);
             await _dbContext.SaveChangesAsync();
         }
 
@@ -66,6 +68,20 @@ namespace HotelBookingSystem.Services
             }
             _dbContext.Admins.Remove(admin);
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> AdminExistsAsync(int adminId)
+        {
+            return await _dbContext.Admins.AnyAsync(c => c.AdminId == adminId);
+        }
+
+        public async Task<bool?> GetAdminStatusByIdAsync(int adminId)
+        {
+            var admin = await _dbContext.Admins
+                .Where(a => a.AdminId == adminId)
+                .Select(a => a.IsActive)
+                .FirstOrDefaultAsync();
+            return admin;
         }
     }
 }

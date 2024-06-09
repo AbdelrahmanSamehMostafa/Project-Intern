@@ -38,6 +38,11 @@ class _CustomerAndAdminLoginState extends State<CustomerAndAdminLogin> {
           print('Unexpected response format: ${response.body}');
         }
       } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please Enter Valid credentials!'),
+          ),
+        );
         // Handle non-200 status code
         print('HTTP Error: ${response.statusCode}');
       }
@@ -47,7 +52,20 @@ class _CustomerAndAdminLoginState extends State<CustomerAndAdminLogin> {
     }
   }
 
-  void decodeToken(String token) {
+  Future<bool> getAdminStatus(int adminId) async {
+    final Uri uri = Uri.parse('http://localhost:5187/api/Admin/$adminId/status');
+    final response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body);
+      return jsonResponse['isActive'] as bool;
+    } else {
+      print('Failed to fetch admin status: ${response.statusCode}');
+      return false;
+    }
+  }
+
+  void decodeToken(String token) async {
     try {
       final parts = token.split('.');
       if (parts.length != 3) {
@@ -61,13 +79,22 @@ class _CustomerAndAdminLoginState extends State<CustomerAndAdminLogin> {
       final role = decodedMap['role'] as String;
 
       // Ensure to parse 'id' field as int
-      final customerId = int.tryParse(decodedMap['id'].toString()) ?? 0;
+      final id = int.tryParse(decodedMap['id'].toString()) ?? 0;
 
       // Navigate based on role
       if (role == 'Customer') {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CustomerHomePage(custId: customerId)));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CustomerHomePage(custId: id)));
       } else if (role == 'Admin') {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AdminHomePage()));
+        final isActive = await getAdminStatus(id);
+        if (isActive) {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AdminHomePage()));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Wait for the super admin to accept your request...'),
+            ),
+          );
+        }
       } else {
         // Handle unknown role
         print('Unknown role: $role');
@@ -103,7 +130,6 @@ class _CustomerAndAdminLoginState extends State<CustomerAndAdminLogin> {
                 child: Column(
                   children: [
                     TextField(
-                      // Text field for entering email
                       controller: loginEmailController,
                       decoration: InputDecoration(
                         labelText: 'Email',
@@ -117,7 +143,6 @@ class _CustomerAndAdminLoginState extends State<CustomerAndAdminLogin> {
                     ),
                     const SizedBox(height: 16),
                     TextField(
-                      // Text field for entering password
                       obscureText: true,
                       controller: loginPasswordController,
                       decoration: InputDecoration(

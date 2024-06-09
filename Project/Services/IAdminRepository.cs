@@ -12,5 +12,9 @@ namespace HotelBookingSystem.Services
         public Task CreateAdminAsync(Admin admin);
         public Task UpdateAdminAsync(Admin admin);
         public Task DeleteAdminAsync(int adminId);
+        public void CreateAdminRequest(Admin admin);
+        public Task<bool?> GetAdminStatusByIdAsync(int adminId);
+        public Task<bool> AdminExistsAsync(int adminId);
+
     }
 }

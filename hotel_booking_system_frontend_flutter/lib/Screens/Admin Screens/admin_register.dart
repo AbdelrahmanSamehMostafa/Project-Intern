@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'admin_homepage.dart'; // Add this line
+import '../Main Screens/main_login.dart';
 
 class AdminRegister extends StatefulWidget {
   const AdminRegister({super.key});
@@ -203,8 +203,8 @@ class _AdminRegisterState extends State<AdminRegister> {
 
     if (response.statusCode == 201) {
       // Successfully signed up
-      print('Signup successful');
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminHomePage()));
+      
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const CustomerAndAdminLogin()));
     } else {
       // Error during signup
       print('Signup failed: ${response.statusCode}');

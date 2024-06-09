@@ -54,7 +54,7 @@ namespace HotelBookingSystem.Controllers
         public async Task<ActionResult<AdminDTO>> CreateAdmin(AdminForCreationDTO admin)
         {
             var adminEntity = _mapper.Map<Admin>(admin);
-            adminEntity.SuperAdminId = 1; 
+            adminEntity.SuperAdminId = 1;
             await _adminRepository.CreateAdminAsync(adminEntity);
 
             var adminToReturn = _mapper.Map<AdminDTO>(admin);
@@ -80,5 +80,24 @@ namespace HotelBookingSystem.Controllers
             await _adminRepository.DeleteAdminAsync(adminId);
             return NoContent();
         }
+
+        [HttpGet("{adminId}/status")]
+        public async Task<IActionResult> GetAdminStatus(int adminId)
+        {
+            var adminExists = await _adminRepository.AdminExistsAsync(adminId);
+            if (!adminExists)
+            {
+                return NotFound("Admin not found");
+            }
+
+            var isActive = await _adminRepository.GetAdminStatusByIdAsync(adminId);
+            if (isActive == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new { AdminId = adminId, IsActive = isActive });
+        }
+
     }
 }

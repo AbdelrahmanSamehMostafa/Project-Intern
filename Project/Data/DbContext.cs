@@ -47,7 +47,8 @@ public class ApplicationDbContext : DbContext
                 FirstName = "Shady",
                 LastName = "Waleed",
                 Email = "shady.waleed@gmail.com",
-                Password = "adminpass123"
+                Password = "adminpass123",
+                IsActive = true,
             },
             new Admin
             {
@@ -56,7 +57,8 @@ public class ApplicationDbContext : DbContext
                 FirstName = "Mohamed",
                 LastName = "Salah",
                 Email = "mohamed.salah@gmail.com",
-                Password = "adminpass123"
+                Password = "adminpass123",
+                IsActive = true,
             }
         );
 
