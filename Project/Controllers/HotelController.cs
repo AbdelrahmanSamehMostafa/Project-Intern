@@ -23,34 +23,7 @@ namespace HotelBookingSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllHotels(string? orderBy = "", string? filter = "")
         {
-            IEnumerable<HotelDto> hotels;
-
-            if (!string.IsNullOrEmpty(filter))
-            {
-                hotels = await _hotelRepo.GetFilteredHotels(filter);
-            }
-            else
-            {
-                switch (orderBy.ToLower())
-                {
-                    case "rating":
-                        hotels = await _hotelRepo.GetAllHotelsOrderedByRating();
-                        break;
-                    case "availablerooms":
-                        hotels = await _hotelRepo.GetAllHotelsOrderedByAvailableRooms();
-                        break;
-                    case "address":
-                        hotels = await _hotelRepo.GetAllHotelsOrderedByAddress();
-                        break;
-                    case "name":
-                        hotels = await _hotelRepo.GetAllHotelsOrderedByName();
-                        break;
-                    default:
-                        hotels = await _hotelRepo.GetAllHotels();
-                        break;
-                }
-            }
-
+            var hotels = await _hotelRepo.GetAllHotels(orderBy, filter);
             return Ok(hotels);
         }
 

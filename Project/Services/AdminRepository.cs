@@ -29,7 +29,9 @@ namespace HotelBookingSystem.Services
             var RequestToAdd = new PendingReq
             {
                 AdminID = admin.AdminId,
-                SuperAdminID = 1
+                SuperAdminID = 1,
+                AdminName=admin.FirstName+" "+ admin.LastName,
+                AdminMail=admin.Email
             };
             _dbContext.PendingReqs.Add(RequestToAdd);
         }

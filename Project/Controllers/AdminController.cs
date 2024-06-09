@@ -57,8 +57,8 @@ namespace HotelBookingSystem.Controllers
             adminEntity.SuperAdminId = 1;
             await _adminRepository.CreateAdminAsync(adminEntity);
 
-            var adminToReturn = _mapper.Map<AdminDTO>(admin);
-            return CreatedAtRoute("GetAdminById", new { adminId = adminToReturn.AdminId }, adminToReturn);
+            var adminToReturn = _mapper.Map<AdminForCreationDTO>(admin);
+            return Ok(adminToReturn);
         }
 
         [HttpPut("{adminId}")]

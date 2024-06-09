@@ -1,6 +1,5 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,33 +18,34 @@ namespace HotelBookingSystem.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<HotelDto>> GetAllHotelsOrderedByRating()
+        public async Task<IEnumerable<HotelDto>> GetAllHotels(string orderBy, string filter)
         {
-            var hotels = await _dbContext.Hotels.Include(h => h.Address).OrderByDescending(h => h.Rating).ToListAsync();
-            return _mapper.Map<IEnumerable<HotelDto>>(hotels);
-        }
+            IQueryable<Hotel> query = _dbContext.Hotels.Include(h => h.Address);
 
-        public async Task<IEnumerable<HotelDto>> GetAllHotelsOrderedByAvailableRooms()
-        {
-            var hotels = await _dbContext.Hotels.Include(h => h.Address).OrderByDescending(h => h.NumberOfAvailableRooms).ToListAsync();
-            return _mapper.Map<IEnumerable<HotelDto>>(hotels);
-        }
+            if (!string.IsNullOrEmpty(filter))
+            {
+                query = query.Where(h => h.Name.Contains(filter) || h.Description.Contains(filter));
+            }
 
-        public async Task<IEnumerable<HotelDto>> GetAllHotelsOrderedByAddress()
-        {
-            var hotels = await _dbContext.Hotels.Include(h => h.Address).OrderBy(h => h.Address).ToListAsync();
-            return _mapper.Map<IEnumerable<HotelDto>>(hotels);
-        }
+            switch (orderBy.ToLower())
+            {
+                case "rating":
+                    query = query.OrderByDescending(h => h.Rating);
+                    break;
+                case "availablerooms":
+                    query = query.OrderByDescending(h => h.NumberOfAvailableRooms);
+                    break;
+                case "address":
+                    query = query.OrderBy(h => h.Address.City);
+                    break;
+                case "name":
+                    query = query.OrderBy(h => h.Name);
+                    break;
+                default:
+                    break;
+            }
 
-        public async Task<IEnumerable<HotelDto>> GetAllHotelsOrderedByName()
-        {
-            var hotels = await _dbContext.Hotels.Include(h => h.Address).OrderBy(h => h.Name).ToListAsync();
-            return _mapper.Map<IEnumerable<HotelDto>>(hotels);
-        }
-
-        public async Task<IEnumerable<HotelDto>> GetAllHotels()
-        {
-            var hotels = await _dbContext.Hotels.Include(h => h.Address).ToListAsync();
+            var hotels = await query.ToListAsync();
             return _mapper.Map<IEnumerable<HotelDto>>(hotels);
         }
 
@@ -57,12 +57,10 @@ namespace HotelBookingSystem.Services
 
             return _mapper.Map<HotelDto>(hotel);
         }
+
         public async Task<IEnumerable<Hotel>> GetHotelsByIdsAsync(IEnumerable<string> hotelIds)
         {
-
             var ids = hotelIds.Select(id => int.Parse(id)).ToList();
-
-
             var hotels = await _dbContext.Hotels
                 .Where(h => ids.Contains(h.HotelId))
                 .Include(h => h.Address)
@@ -70,7 +68,6 @@ namespace HotelBookingSystem.Services
 
             return hotels;
         }
-
 
         public async Task DeleteHotel(int id)
         {
@@ -90,7 +87,6 @@ namespace HotelBookingSystem.Services
             }
 
             _dbContext.Hotels.Add(hotel);
-
             await _dbContext.SaveChangesAsync();
         }
 
@@ -104,17 +100,9 @@ namespace HotelBookingSystem.Services
 
             _mapper.Map(hotelUpdateDto, existingHotel);
             _dbContext.Hotels.Update(existingHotel);
-
             await _dbContext.SaveChangesAsync();
         }
-        public async Task<IEnumerable<HotelDto>> GetFilteredHotels(string filter)
-        {
-            var hotels = await _dbContext.Hotels
-                .Include(h => h.Address)
-                .Where(h => h.Name.Contains(filter) || h.Description.Contains(filter))
-                .ToListAsync();
-            return _mapper.Map<IEnumerable<HotelDto>>(hotels);
-        }
+
         public async Task<bool> HotelExistsAsync(int id)
         {
             return await _dbContext.Hotels.AnyAsync(c => c.HotelId == id);

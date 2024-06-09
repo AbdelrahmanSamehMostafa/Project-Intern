@@ -6,5 +6,9 @@ public class PendingReq
     [Key]
     public int PendingReqId { get; set; }
     public int SuperAdminID { get; set; }
-    public int AdminID { get; set; }           
+    public int AdminID { get; set; } 
+    public string? AdminName {get; set;}     
+    public string? AdminMail {get; set;}     
+
 }
+
