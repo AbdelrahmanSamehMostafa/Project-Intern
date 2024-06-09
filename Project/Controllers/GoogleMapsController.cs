@@ -1,8 +1,10 @@
 using HotelBookingSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 [Route("api/GoogleMaps")]
+[Authorize]
 [ApiController]
 public class GoogleMapsController : ControllerBase
 {

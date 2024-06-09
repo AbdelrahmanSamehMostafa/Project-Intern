@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using HotelBookingSystem.Services;
 using AutoMapper;
 using HotelBookingSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HotelBookingSystem.Controllers
 {
     [Route("api/Hotel")]
+    [Authorize]
     [ApiController]
     public class HotelController : ControllerBase
     {

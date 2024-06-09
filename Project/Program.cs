@@ -3,17 +3,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Net.Http;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("HotelBookingDatabase")));
 
-// Allow all origins, methods, and headers for simplicity
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -27,20 +25,13 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-// Register EmailService with SendGrid API key
-string sendGridApiKey = builder.Configuration["SendGrid:ApiKey"]; // Ensure you have this value in appsettings.json or secrets
+
+string sendGridApiKey = builder.Configuration["SendGrid:ApiKey"];
 builder.Services.AddTransient<IEmailService>(provider => new EmailService(sendGridApiKey));
 
 builder.Services.AddMemoryCache();
 
-var jwtSettings = builder.Configuration.GetSection("Authentication");
-var key = Encoding.ASCII.GetBytes(jwtSettings["SecretForKey"]);
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;
@@ -49,12 +40,30 @@ builder.Services.AddAuthentication(options =>
     {
         ValidateIssuer = true,
         ValidateAudience = true,
-        ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(key)
+        ValidIssuer = builder.Configuration["Authentication:Issuer"],
+        ValidAudience = builder.Configuration["Authentication:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Authentication:SecretForKey"]))
     };
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CustomerZ", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim("Role", "Customer");
+    });
+    options.AddPolicy("AdminZ", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim("Role", "Admin");
+    });
+    options.AddPolicy("SuperAdminZ", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim("Role", "SuperAdmin");
+    });
 });
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
@@ -71,26 +80,47 @@ builder.Services.AddScoped<ValidationServices>();
 var googleMapsSettings = builder.Configuration.GetSection("GoogleMaps");
 builder.Services.AddScoped(sp => new GoogleMapsServices(googleMapsSettings["ApiKey"]));
 
-// Register HttpClient
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 
-// Add logging
 builder.Services.AddLogging();
-
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(config =>
 {
     config.SwaggerDoc("v1", new OpenApiInfo { Title = "HotelBookingSystem", Version = "v1" });
+
+    config.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please insert JWT with Bearer into field",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    config.AddSecurityRequirement(new OpenApiSecurityRequirement {
+        {
+            new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "HotelBookingSystem v1");
+        c.RoutePrefix = string.Empty;
+    });
 }
 
 using (var scope = app.Services.CreateScope())
@@ -100,14 +130,12 @@ using (var scope = app.Services.CreateScope())
     dbContext.InitializeDatabase();
 }
 
-// Enable CORS
 app.UseCors("AllowAll");
 app.UseHttpsRedirection();
-
-app.MapControllers();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapControllers();
 app.Run();

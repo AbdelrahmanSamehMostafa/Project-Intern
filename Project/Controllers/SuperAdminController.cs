@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using HotelBookingSystem.Models;
 using HotelBookingSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HotelBookingSystem.Controllers
 {
     [ApiController]
+    [Authorize(Policy ="SuperAdminZ")]
     [Route("api/SuperAdmin")]
     public class SuperAdminController : ControllerBase
     {

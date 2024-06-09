@@ -47,7 +47,7 @@ public class ApplicationDbContext : DbContext
                 FirstName = "Shady",
                 LastName = "Waleed",
                 Email = "shady.waleed@gmail.com",
-                Password = "adminpass123",
+                Password = "temp",
                 IsActive = true,
             },
             new Admin
@@ -69,7 +69,7 @@ public class ApplicationDbContext : DbContext
                 FirstName = "Eslam",
                 LastName = "Waleed",
                 Email = "eslam.waleed@gmail.com",
-                Password = "password123",
+                Password = "temp",
                 Wishlists = new List<string> { "1", "2", "3" },
             },
             new Customer
@@ -88,6 +88,15 @@ public class ApplicationDbContext : DbContext
                 LastName = "Mohamed",
                 Email = "Ahmed.Mohamed@gmail.com",
                 Password = "password123",
+                Wishlists = new List<string> { "4", "5" },
+            },
+            new Customer
+            {
+                CustomerId = 4,
+                FirstName = "test",
+                LastName = "test",
+                Email = "temp@gmail.com",
+                Password = "temp",
                 Wishlists = new List<string> { "4", "5" },
             }
         );

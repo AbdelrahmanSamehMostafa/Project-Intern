@@ -2,28 +2,31 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using HotelBookingSystem.Models;
 using HotelBookingSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HotelBookingSystem.Controllers
 {
     [Route("api/Addresses")]
+    [Authorize(Policy="CustomerZ")]
     [ApiController]
     public class AddressController : ControllerBase
     {
         private readonly IAddressRepository _addressRepository;
-        private readonly IMapper _mapper;
+    private readonly IMapper _mapper;
 
-        public AddressController(IAddressRepository addressRepository, IMapper mapper)
-        {
-            _addressRepository = addressRepository;
-            _mapper = mapper;
-        }
+    public AddressController(IAddressRepository addressRepository, IMapper mapper)
+    {
+        _addressRepository = addressRepository;
+        _mapper = mapper;
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllAddresses()
-        {
-            var addresses = await _addressRepository.GetAllAddressesAsync();
-            return Ok(_mapper.Map<IEnumerable<AddressBaseDTO>>(addresses));
-        }
+    [HttpGet]
+    public async Task<IActionResult> GetAllAddresses()
+    {
+        var addresses = await _addressRepository.GetAllAddressesAsync();
+        return Ok(_mapper.Map<IEnumerable<AddressBaseDTO>>(addresses));
+    }
+
 
         [HttpGet("{addressId}", Name = "GetAddressById")]
         public async Task<IActionResult> GetAddressById(int addressId)
@@ -41,10 +44,8 @@ namespace HotelBookingSystem.Controllers
         {
             var addressEntity = _mapper.Map<Address>(addressdto);
             await _addressRepository.CreateAddressAsync(addressEntity);
-
             return StatusCode(201);
         }
-
 
         [HttpPut("{addressId}")]
         public async Task<IActionResult> UpdateAddress(int addressId, AddressBaseDTO addressBaseDTO)

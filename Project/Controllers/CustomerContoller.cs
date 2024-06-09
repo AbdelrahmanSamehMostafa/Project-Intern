@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using HotelBookingSystem.Models;
 using HotelBookingSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HotelBookingSystem.Controllers
 {
     [Route("api/Customer")]
+    [Authorize]
     [ApiController]
     public class CustomerContoller : ControllerBase
     {

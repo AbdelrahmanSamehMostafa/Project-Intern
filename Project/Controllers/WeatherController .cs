@@ -3,7 +3,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using HotelBookingSystem.Services;
-
+using Microsoft.AspNetCore.Authorization;
+    
+namespace HotelBookingSystem.Controllers
+{
+    [ApiController]
+    [Authorize]
+    [Route("api/weather")]
 public class WeatherController : ControllerBase
 {
     private readonly IWeatherService _weatherService;
@@ -18,7 +24,7 @@ public class WeatherController : ControllerBase
         _hotelRepository=hotelRepository;
     }
 
-    [HttpGet("weather/{city}")]
+    [HttpGet("{city}")]
     public async Task<ActionResult<WeatherModel>> GetWeather(string city)
     {
         try
@@ -32,7 +38,7 @@ public class WeatherController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
-    [HttpGet("weather/{HotelId:int}")]
+    [HttpGet("{HotelId:int}")]
     public async Task<ActionResult<WeatherModel>> GetWeatherbyHotelId(int HotelId)
     {
         var hotel = await _hotelRepository.GetHotelById(HotelId);
@@ -43,7 +49,6 @@ public class WeatherController : ControllerBase
         } 
         var weather = await _weatherService.GetWeatherAsync(hotel.Address.City);
         return Ok(weather);
+        }
     }
-
-
 }

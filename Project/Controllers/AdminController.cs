@@ -6,18 +6,22 @@ using System.Threading.Tasks;
 using AutoMapper;
 using HotelBookingSystem.Models;
 using HotelBookingSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic;
 
 namespace HotelBookingSystem.Controllers
 {
     [Route("api/Admin")]
+    [Authorize(Policy ="AdminZ")]
     [ApiController]
     public class AdminController : Controller
     {
 
         private IAdminRepository _adminRepository;
         private IMapper _mapper;
+        
 
         public AdminController(IAdminRepository adminRepository, IMapper mapper)
         {

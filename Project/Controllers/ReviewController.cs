@@ -1,11 +1,13 @@
 using AutoMapper;
 using HotelBookingSystem.Models;
 using HotelBookingSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelBookingSystem.Controllers
 {
     [Route("api/Reviews")]
+    [Authorize]
     [ApiController]
     public class ReviewContoller : ControllerBase
     {

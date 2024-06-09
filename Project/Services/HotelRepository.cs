@@ -44,7 +44,6 @@ namespace HotelBookingSystem.Services
                 default:
                     break;
             }
-
             var hotels = await query.ToListAsync();
             return _mapper.Map<IEnumerable<HotelDto>>(hotels);
         }
