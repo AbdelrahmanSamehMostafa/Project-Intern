@@ -25,7 +25,7 @@ namespace HotelBookingSystem.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("Login")]
-        public async Task<ActionResult<string>> Login(UserForLoginDTO userForLoginDTO)
+        public async Task<ActionResult<LoginResponseDTO>> Login(UserForLoginDTO userForLoginDTO)
         {
             var user = await _validationServices.ValidateUserCredentials(userForLoginDTO.Email, userForLoginDTO.Password);
 
@@ -33,24 +33,10 @@ namespace HotelBookingSystem.Controllers
             {
                 return Unauthorized();
             }
-            switch (user.Role)
-            {
-                case "Admin":
-                    var adminToken = _tokenServices.GenerateAdminToken(user);
-                    return Ok(adminToken);
 
-                case "Customer":
-                    var CustomerToken = _tokenServices.GenerateCustomerToken(user);
-                    return Ok(CustomerToken);
-
-                case "SuperAdmin":
-                    var SuperAdminToken = _tokenServices.Generate_SA_Token(user);
-                    return Ok(SuperAdminToken);
-
-                default:
-                    return NotFound();
-            }
+            return _tokenServices.GenerateToken(user);
         }
+
 
     }
 }

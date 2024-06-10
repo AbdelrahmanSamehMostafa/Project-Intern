@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using HotelBookingSystem.interfaces;
+using HotelBookingSystem.Models;
 
 namespace HotelBookingSystem.Services
 {
@@ -14,11 +15,7 @@ namespace HotelBookingSystem.Services
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
-        public class UserValidationResult
-        {
-            public dynamic User { get; set; }
-            public string Role { get; set; }
-        }
+        
 
         public async Task<UserValidationResult> ValidateUserCredentials(string email, string password)
         {
