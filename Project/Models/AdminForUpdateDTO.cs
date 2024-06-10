@@ -3,17 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HotelBookingSystem.Models
+namespace Project.Models
 {
-    public record AdminDTO
+    public record AdminForUpdateDTO
     {
-       // public int AdminId { get; set; }
-
         public string Name { get; set; }
-
         public string Email { get; set; }
-
-        public string Password { get; set; }
-        
     }
 }

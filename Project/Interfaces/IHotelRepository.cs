@@ -13,5 +13,6 @@ namespace HotelBookingSystem.interfaces
         Task<IEnumerable<Hotel>> GetHotelsByIdsAsync(IEnumerable<string> hotelIds);
         Task UpdateHotel(int id, HotelUpdateDto hotelUpdateDto);
         Task<bool> HotelExistsAsync(int id);
+        Task<IEnumerable<Hotel>> GetHotelsByAdminId(int adminId);
     }
 }

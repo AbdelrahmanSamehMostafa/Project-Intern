@@ -87,7 +87,7 @@ namespace HotelBookingSystem.Services
             {
                 throw new ArgumentNullException(nameof(hotel));
             }
-
+            hotel.Rating = hotel.averageRating;
             _dbContext.Hotels.Add(hotel);
             await _dbContext.SaveChangesAsync();
         }
@@ -108,6 +108,14 @@ namespace HotelBookingSystem.Services
         public async Task<bool> HotelExistsAsync(int id)
         {
             return await _dbContext.Hotels.AnyAsync(c => c.HotelId == id);
+        }
+        public async Task<IEnumerable<Hotel>> GetHotelsByAdminId(int adminId)
+        {
+            return await _dbContext.Hotels
+                .Where(h => h.AdminId == adminId)
+                .Include(h => h.Address)
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }

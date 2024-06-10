@@ -83,5 +83,18 @@ namespace HotelBookingSystem.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("admin/{adminId}")]
+        public async Task<IActionResult> GetHotelsByAdminId(int adminId)
+        {
+            var hotels = await _hotelRepo.GetHotelsByAdminId(adminId);
+            if (hotels == null || !hotels.Any())
+            {
+                return NotFound();
+            }
+
+            var hotelDtos = _mapper.Map<List<HotelDto>>(hotels);
+            return Ok(hotelDtos);
+        }
     }
 }

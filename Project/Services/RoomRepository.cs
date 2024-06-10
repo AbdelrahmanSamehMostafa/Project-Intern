@@ -22,7 +22,7 @@ namespace HotelBookingSystem.Services
         {
             var room = await _context.Rooms.AsNoTracking().Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
 
-            if(room == null)
+            if (room == null)
                 return null;
 
             return room;
@@ -30,7 +30,7 @@ namespace HotelBookingSystem.Services
 
         public async Task CreateRoomAsync(Room room)
         {
-            if(room == null)
+            if (room == null)
                 throw new ArgumentNullException(nameof(room));
 
             _context.Rooms.Add(room);
@@ -39,7 +39,7 @@ namespace HotelBookingSystem.Services
 
         public async Task UpdateRoomAsync(Room room)
         {
-            if(room == null)
+            if (room == null)
                 throw new ArgumentNullException(nameof(room));
 
             _context.Rooms.Update(room);
@@ -48,14 +48,14 @@ namespace HotelBookingSystem.Services
 
         public async Task DeleteRoomAsync(int roomId)
         {
-            if(roomId == 0)
+            if (roomId == 0)
                 throw new ArgumentNullException(nameof(roomId));
 
-            
+
             var room = await GetRoomByIdAsync(roomId);
-            if(room == null)
+            if (room == null)
                 throw new ArgumentNullException(nameof(room));
-                
+
             _context.Rooms.Remove(room);
             await _context.SaveChangesAsync();
         }
@@ -63,6 +63,13 @@ namespace HotelBookingSystem.Services
         public async Task<bool> RoomExistsAsync(int id)
         {
             return await _context.Rooms.AnyAsync(r => r.RoomId == id);
+        }
+        public async Task<IEnumerable<Room>> GetRoomsByHotelIdAsync(int hotelId)
+        {
+            return await _context.Rooms
+                .AsNoTracking()
+                .Where(r => r.HotelId == hotelId)
+                .ToListAsync();
         }
     }
 }

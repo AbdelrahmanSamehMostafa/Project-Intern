@@ -8,7 +8,7 @@ using HotelBookingSystem.interfaces;
 namespace HotelBookingSystem.Controllers
 {
     [Route("api/Customer")]
-    [Authorize(Policy ="CustomerZ")]
+    [Authorize]
     [ApiController]
     public class CustomerContoller : ControllerBase
     {

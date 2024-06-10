@@ -3,11 +3,12 @@ using HotelBookingSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using HotelBookingSystem.interfaces;
+using Project.Models;
 
 namespace HotelBookingSystem.Controllers
 {
     [Route("api/Admin")]
-    [Authorize(Policy ="AdminZ")]
+    [Authorize]
     [ApiController]
     public class AdminController : Controller
     {
@@ -59,15 +60,16 @@ namespace HotelBookingSystem.Controllers
         }
 
         [HttpPut("{adminId}")]
-        public async Task<IActionResult> UpdateAdmin(int adminId, AdminDTO adminDTO)
+        public async Task<IActionResult> UpdateAdmin(int adminId, AdminForUpdateDTO admin)
         {
-            if (adminId != adminDTO.AdminId)
-            {
-                return BadRequest();
-            }
 
-            var admin = _mapper.Map<Admin>(adminDTO);
-            await _adminRepository.UpdateAdminAsync(admin);
+            var existingAdmin = await _adminRepository.GetAdminByIdAsync(adminId);
+
+            // Map properties from customerDTO to existingCustomer
+            _mapper.Map(admin, existingAdmin);
+
+            // Update the customer in the repository
+            await _adminRepository.UpdateAdminAsync(existingAdmin);
             return NoContent();
         }
 
@@ -77,7 +79,7 @@ namespace HotelBookingSystem.Controllers
             await _adminRepository.DeleteAdminAsync(adminId);
             return NoContent();
         }
-        
+
         [AllowAnonymous]
         [HttpGet("{adminId}/status")]
         public async Task<IActionResult> GetAdminStatus(int adminId)

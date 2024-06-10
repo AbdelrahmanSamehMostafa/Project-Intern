@@ -28,6 +28,13 @@ namespace HotelBookingSystem.Controllers
             return Ok(_mapper.Map<IEnumerable<RoomDTO>>(rooms));
         }
 
+        [HttpGet("Hotel/{hotelId}")]
+        public async Task<IActionResult> GetRoomsByHotelId(int hotelId)
+        {
+            var rooms = await _roomRepository.GetRoomsByHotelIdAsync(hotelId);
+            return Ok(_mapper.Map<IEnumerable<RoomDTO>>(rooms));
+        }
+
         [HttpGet]
         [Route("{roomId}", Name = "GetRoomById")]
         public async Task<IActionResult> GetRoomById(int roomId)
@@ -39,6 +46,7 @@ namespace HotelBookingSystem.Controllers
             }
             return Ok(_mapper.Map<RoomDTO>(room));
         }
+
         [HttpPost]
         [Route("{HotelId}")]
         public async Task<IActionResult> CreateRoom(int HotelId, [FromBody] RoomDTO roomdto)
@@ -64,7 +72,7 @@ namespace HotelBookingSystem.Controllers
                 return NotFound();
             }
 
-            if(roomWithIdDTO.RoomId != roomId)
+            if (roomWithIdDTO.RoomId != roomId)
                 return BadRequest();
             _mapper.Map(roomWithIdDTO, room);
             room.isAvailable = roomWithIdDTO.isAvailable;
@@ -80,7 +88,7 @@ namespace HotelBookingSystem.Controllers
             {
                 return NotFound();
             }
-            
+
             await _roomRepository.DeleteRoomAsync(roomId);
             return NoContent();
         }

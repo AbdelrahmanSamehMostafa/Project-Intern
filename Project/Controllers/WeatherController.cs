@@ -39,7 +39,7 @@ namespace HotelBookingSystem.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        
+
         [HttpGet("{HotelId:int}")]
         public async Task<ActionResult<WeatherModel>> GetWeatherbyHotelId(int HotelId)
         {

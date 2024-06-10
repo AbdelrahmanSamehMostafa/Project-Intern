@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using HotelBookingSystem.Models;
+using Project.Models;
 
 namespace HotelBookingSystem.Profiles
 {
@@ -22,10 +23,16 @@ namespace HotelBookingSystem.Profiles
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
                 .ForMember(dest => dest.SuperAdminId, opt => opt.MapFrom(src => 1));
+
             CreateMap<AdminForCreationDTO, AdminDTO>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
 
-            //CreateMap<AdminDTO, Admin>(); // Mapping from AdminDTO to Admin
+            CreateMap<AdminForUpdateDTO, Admin>()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => ExtractFirstName(src.Name)))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => ExtractLastName(src.Name)))
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => ExtractFirstName(src.Name) ?? ""))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => ExtractLastName(src.Name) ?? ""))
+                .ReverseMap();
         }
 
         private string ExtractFirstName(string fullName)

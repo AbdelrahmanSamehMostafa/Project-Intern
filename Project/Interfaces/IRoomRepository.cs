@@ -14,6 +14,7 @@ namespace HotelBookingSystem.interfaces
         public Task UpdateRoomAsync(Room room);
 
         public Task DeleteRoomAsync(int roomId);
+        Task<IEnumerable<Room>> GetRoomsByHotelIdAsync(int hotelId);
         
     }
 }
