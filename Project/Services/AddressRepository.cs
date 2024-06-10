@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using HotelBookingSystem.Models;
+using HotelBookingSystem.interfaces;
 
 namespace HotelBookingSystem.Services
 {
@@ -17,12 +18,12 @@ namespace HotelBookingSystem.Services
 
         public async Task<IEnumerable<Address>> GetAllAddressesAsync()
         {
-            return await _context.Addresses.ToListAsync();
+            return await _context.Addresses.AsNoTracking().ToListAsync();
         }
 
         public async Task<Address?> GetAddressByIdAsync(int addressId)
         {
-            return await _context.Addresses.FirstOrDefaultAsync(a => a.AddressId == addressId);
+            return await _context.Addresses.AsNoTracking().FirstOrDefaultAsync(a => a.AddressId == addressId);
         }
 
         public async Task CreateAddressAsync(Address address)

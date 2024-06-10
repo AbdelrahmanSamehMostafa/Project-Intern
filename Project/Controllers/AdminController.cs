@@ -10,18 +10,19 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
+using HotelBookingSystem.interfaces;
 
 namespace HotelBookingSystem.Controllers
 {
     [Route("api/Admin")]
-    [Authorize(Policy ="AdminZ")]
+    [Authorize]
     [ApiController]
     public class AdminController : Controller
     {
 
         private IAdminRepository _adminRepository;
         private IMapper _mapper;
-        
+
 
         public AdminController(IAdminRepository adminRepository, IMapper mapper)
         {
@@ -53,7 +54,7 @@ namespace HotelBookingSystem.Controllers
             return Ok(adminDtoToReturn);
         }
 
-
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<AdminDTO>> CreateAdmin(AdminForCreationDTO admin)
         {
@@ -84,7 +85,8 @@ namespace HotelBookingSystem.Controllers
             await _adminRepository.DeleteAdminAsync(adminId);
             return NoContent();
         }
-
+        
+        [AllowAnonymous]
         [HttpGet("{adminId}/status")]
         public async Task<IActionResult> GetAdminStatus(int adminId)
         {

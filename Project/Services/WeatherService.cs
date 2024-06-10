@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using HotelBookingSystem.interfaces;
 
 public class WeatherService : IWeatherService
 {

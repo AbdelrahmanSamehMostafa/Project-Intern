@@ -2,12 +2,13 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using HotelBookingSystem.Models;
 using HotelBookingSystem.Services;
+using HotelBookingSystem.interfaces;
 using Microsoft.AspNetCore.Authorization;
 
 namespace HotelBookingSystem.Controllers
 {
     [Route("api/Addresses")]
-    [Authorize(Policy="CustomerZ")]
+    [Authorize]
     [ApiController]
     public class AddressController : ControllerBase
     {

@@ -5,20 +5,8 @@ using System.Threading.Tasks;
 
 namespace HotelBookingSystem.Models
 {
-    public class CustomerForCreationDTO
+    public class CustomerForCreationDTO : UserForCreationDTO
     {
-
-
-        public string FirstName { get; set; }
-
-
-        public string LastName { get; set; }
-
-
-        public string Email { get; set; }
-
-        public string Password { get; set; }
-
         public List<String> Wishlists { get; set; }
     }
 }

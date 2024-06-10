@@ -12,10 +12,8 @@ public class Room
     [ForeignKey("HotelId")]
     public Hotel Hotel { get; set; }
 
-
     [Required]
-    [StringLength(50)]
-    public string RoomType { get; set; }
+    public RoomType RoomType { get; set; }
 
     [Required]
     [StringLength(500)]
@@ -26,7 +24,5 @@ public class Room
     public double Price { get; set; }
 
     [Required]
-    public bool Availability { get; set; }
-
-
+    public bool isAvailable { get; set; }
 }

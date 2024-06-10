@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using HotelBookingSystem.interfaces;
 
 namespace HotelBookingSystem.Services
 {

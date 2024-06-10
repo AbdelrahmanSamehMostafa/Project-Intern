@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using HotelBookingSystem.interfaces;
 
 namespace HotelBookingSystem.Services
 {

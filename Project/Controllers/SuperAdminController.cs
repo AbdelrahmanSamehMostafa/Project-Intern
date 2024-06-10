@@ -4,11 +4,12 @@ using System.Threading.Tasks;
 using HotelBookingSystem.Models;
 using HotelBookingSystem.Services;
 using Microsoft.AspNetCore.Authorization;
+using HotelBookingSystem.interfaces;
 
 namespace HotelBookingSystem.Controllers
 {
     [ApiController]
-    [Authorize(Policy ="SuperAdminZ")]
+    [Authorize]
     [Route("api/SuperAdmin")]
     public class SuperAdminController : ControllerBase
     {

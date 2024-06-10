@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HotelBookingSystem.Models;
+using HotelBookingSystem.interfaces;
 
 namespace HotelBookingSystem.Services
 {
@@ -44,13 +45,14 @@ namespace HotelBookingSystem.Services
                 default:
                     break;
             }
-            var hotels = await query.ToListAsync();
+            var hotels = await query.AsNoTracking().ToListAsync();
             return _mapper.Map<IEnumerable<HotelDto>>(hotels);
         }
 
         public async Task<HotelDto> GetHotelById(int id)
         {
             var hotel = await _dbContext.Hotels
+                .AsNoTracking()
                 .Include(h => h.Address)
                 .FirstOrDefaultAsync(h => h.HotelId == id);
 
@@ -61,6 +63,7 @@ namespace HotelBookingSystem.Services
         {
             var ids = hotelIds.Select(id => int.Parse(id)).ToList();
             var hotels = await _dbContext.Hotels
+                .AsNoTracking()
                 .Where(h => ids.Contains(h.HotelId))
                 .Include(h => h.Address)
                 .ToListAsync();

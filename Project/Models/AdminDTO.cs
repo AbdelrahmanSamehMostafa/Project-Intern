@@ -14,9 +14,5 @@ namespace HotelBookingSystem.Models
         public string Email { get; set; }
 
         public string Password { get; set; }
-
-        //public bool IsActive { get; set; } = false;
-
-        //public ICollection<Hotel>? Hotels { get; set; }
     }
 }

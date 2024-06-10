@@ -5,6 +5,7 @@ using HotelBookingSystem.Services;
 using AutoMapper;
 using HotelBookingSystem.Models;
 using Microsoft.AspNetCore.Authorization;
+using HotelBookingSystem.interfaces;
 
 namespace HotelBookingSystem.Controllers
 {

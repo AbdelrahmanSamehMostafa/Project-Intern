@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using HotelBookingSystem.interfaces;
 
 namespace HotelBookingSystem.Services
 {
@@ -17,12 +18,12 @@ namespace HotelBookingSystem.Services
 
         public async Task<IEnumerable<Admin>> GetAllAdminsAsync()
         {
-            return await _dbContext.Admins.ToListAsync();
+            return await _dbContext.Admins.AsNoTracking().ToListAsync();
         }
 
         public async Task<Admin?> GetAdminByIdAsync(int adminId)
         {
-            return await _dbContext.Admins.Where(e => e.AdminId == adminId).FirstOrDefaultAsync();
+            return await _dbContext.Admins.Where(e => e.AdminId == adminId).AsNoTracking().FirstOrDefaultAsync();
         }
         public async void CreateAdminRequest(Admin admin)
         {
@@ -30,8 +31,8 @@ namespace HotelBookingSystem.Services
             {
                 AdminID = admin.AdminId,
                 SuperAdminID = 1,
-                AdminName=admin.FirstName+" "+ admin.LastName,
-                AdminMail=admin.Email
+                AdminName = admin.FirstName + " " + admin.LastName,
+                AdminMail = admin.Email
             };
             _dbContext.PendingReqs.Add(RequestToAdd);
         }
@@ -80,6 +81,7 @@ namespace HotelBookingSystem.Services
         public async Task<bool?> GetAdminStatusByIdAsync(int adminId)
         {
             var admin = await _dbContext.Admins
+                .AsNoTracking()
                 .Where(a => a.AdminId == adminId)
                 .Select(a => a.IsActive)
                 .FirstOrDefaultAsync();

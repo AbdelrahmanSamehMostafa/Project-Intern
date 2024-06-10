@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using HotelBookingSystem.interfaces;
 
 namespace HotelBookingSystem.Services
 {
@@ -18,12 +19,12 @@ namespace HotelBookingSystem.Services
 
         public async Task<IEnumerable<Customer>> GetAllCustomersAsync()
         {
-            return await _dbContext.Customers.ToListAsync();
+            return await _dbContext.Customers.AsNoTracking().ToListAsync();
         }
 
         public async Task<Customer> GetCustomerByIdAsync(int customerId)
         {
-            var customerToReturn = _dbContext.Customers.Where(e => e.CustomerId == customerId).FirstOrDefaultAsync();
+            var customerToReturn = _dbContext.Customers.AsNoTracking().Where(e => e.CustomerId == customerId).FirstOrDefaultAsync();
             if (customerToReturn == null)
             {
                 throw new ArgumentNullException(nameof(customerToReturn));
@@ -70,7 +71,7 @@ namespace HotelBookingSystem.Services
         }
         public async Task<Customer> GetCustomerByEmailAsync(string email)
         {
-            return await _dbContext.Customers.SingleOrDefaultAsync(c => c.Email == email);
+            return await _dbContext.Customers.AsNoTracking().SingleOrDefaultAsync(c => c.Email == email);
         }
     }
 }

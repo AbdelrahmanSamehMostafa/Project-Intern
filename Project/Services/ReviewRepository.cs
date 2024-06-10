@@ -1,6 +1,7 @@
 using AutoMapper;
 using HotelBookingSystem.Models;
 using Microsoft.EntityFrameworkCore;
+using HotelBookingSystem.interfaces;
 
 namespace HotelBookingSystem.Services
 {
@@ -16,12 +17,12 @@ namespace HotelBookingSystem.Services
 
         public async Task<IEnumerable<Review>> GetAllReviewsAsync()
         {
-            return await _context.Reviews.ToListAsync();
+            return await _context.Reviews.AsNoTracking().ToListAsync();
         }
 
         public async Task<Review?> GetReviewByIdAsync(int reviewId)
         {
-            var review = await _context.Reviews.Where(r => r.ReviewId == reviewId).FirstOrDefaultAsync();
+            var review = await _context.Reviews.AsNoTracking().Where(r => r.ReviewId == reviewId).FirstOrDefaultAsync();
 
             if (review == null)
                 return null;
@@ -32,12 +33,14 @@ namespace HotelBookingSystem.Services
         public async Task<IEnumerable<Review>> GetReviewsByHotelIdAsync(int hotelId)
         {
             return await _context.Reviews
+                .AsNoTracking()
                 .Where(r => r.HotelId == hotelId)
                 .ToListAsync();
         }
         public async Task<IEnumerable<Review>> GetReviewsByCustomerIdAsync(int customerId)
         {
             return await _context.Reviews
+                .AsNoTracking()
                 .Where(r => r.CustomerId == customerId)
                 .ToListAsync();
         }

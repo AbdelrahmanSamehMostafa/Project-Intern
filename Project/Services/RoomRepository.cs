@@ -1,5 +1,6 @@
 using HotelBookingSystem.Models;
 using Microsoft.EntityFrameworkCore;
+using HotelBookingSystem.interfaces;
 
 namespace HotelBookingSystem.Services
 {
@@ -14,12 +15,12 @@ namespace HotelBookingSystem.Services
 
         public async Task<IEnumerable<Room>> GetAllRoomsAsync()
         {
-            return await _context.Rooms.ToListAsync();
+            return await _context.Rooms.AsNoTracking().ToListAsync();
         }
 
         public async Task<Room?> GetRoomByIdAsync(int roomId)
         {
-            var room = await _context.Rooms.Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
+            var room = await _context.Rooms.AsNoTracking().Where(r => r.RoomId == roomId).FirstOrDefaultAsync();
 
             if(room == null)
                 return null;

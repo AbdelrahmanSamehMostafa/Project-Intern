@@ -7,8 +7,7 @@ namespace HotelBookingSystem.Profiles
     {
         public AddressProfile()
         {
-            CreateMap<Address, AddressBaseDTO>();
-            CreateMap<AddressBaseDTO,Address>();
+            CreateMap<Address, AddressBaseDTO>().ReverseMap();
         }
     }
 }

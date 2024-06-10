@@ -3,6 +3,7 @@ using HotelBookingSystem.Models;
 using HotelBookingSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using HotelBookingSystem.interfaces;
 
 namespace HotelBookingSystem.Controllers
 {
@@ -48,7 +49,7 @@ namespace HotelBookingSystem.Controllers
             return Ok(_mapper.Map<ReviewDTO>(review));
         }
 
-        [HttpGet("Customer/{customerId}")]
+        [HttpGet("CustomerReviews/{customerId}")]
         public async Task<IActionResult> GetReviewsByCustomerId(int customerId)
         {
             var reviews = await _reviewRepository.GetReviewsByCustomerIdAsync(customerId);
@@ -61,7 +62,7 @@ namespace HotelBookingSystem.Controllers
             return Ok(reviewsDTO);
         }
 
-        [HttpGet("Hotel/{hotelId}")]
+        [HttpGet("HotelReviews/{hotelId}")]
         public async Task<IActionResult> GetReviewsByHotelId(int hotelId)
         {
             var reviews = await _reviewRepository.GetReviewsByHotelIdAsync(hotelId);

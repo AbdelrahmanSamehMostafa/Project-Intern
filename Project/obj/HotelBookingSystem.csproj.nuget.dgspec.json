@@ -1,25 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Intern\\Project\\Project\\HotelBookingSystem.csproj": {}
+    "G:\\Global Brands Group\\Project\\HotelBookingSystem.csproj": {}
   },
   "projects": {
-    "D:\\Intern\\Project\\Project\\HotelBookingSystem.csproj": {
+    "G:\\Global Brands Group\\Project\\HotelBookingSystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Intern\\Project\\Project\\HotelBookingSystem.csproj",
+        "projectUniqueName": "G:\\Global Brands Group\\Project\\HotelBookingSystem.csproj",
         "projectName": "HotelBookingSystem",
-        "projectPath": "D:\\Intern\\Project\\Project\\HotelBookingSystem.csproj",
-        "packagesPath": "C:\\Users\\EslaM\\.nuget\\packages\\",
-        "outputPath": "D:\\Intern\\Project\\Project\\obj\\",
+        "projectPath": "G:\\Global Brands Group\\Project\\HotelBookingSystem.csproj",
+        "packagesPath": "C:\\Users\\dell\\.nuget\\packages\\",
+        "outputPath": "G:\\Global Brands Group\\Project\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\EslaM\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\dell\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -115,7 +120,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.206/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

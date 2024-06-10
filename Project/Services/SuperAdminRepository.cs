@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using HotelBookingSystem.interfaces;
+
 namespace HotelBookingSystem.Services
 {
 public class SuperAdminRepository : ISuperAdminRepository
@@ -13,7 +15,7 @@ public class SuperAdminRepository : ISuperAdminRepository
     }
     public async Task<IEnumerable<PendingReq>> GetPendingRequests()
     {
-        return await _dbContext.PendingReqs.ToListAsync();
+        return await _dbContext.PendingReqs.AsNoTracking().ToListAsync();
     }
 
     public async Task AcceptRequest(int requestId)

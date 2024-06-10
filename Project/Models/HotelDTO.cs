@@ -1,18 +1,20 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace HotelBookingSystem.Models
 {
-    public class HotelDto
+    public class HotelDto : HotelBaseDto
     {
         public int HotelId { get; set; }
-        public string? Name { get; set; }
+
+        [Required]
+        // [StringLength(100, ErrorMessage = "Name can't be longer than 100 characters")]
+        public override string? Name { get; set; }
         public double Rating { get; set; }
-        public int TotalNumberOfRooms { get; set; }
-        public int NumberOfAvailableRooms { get; set; }
-        public string? Description { get; set; }
-        public string? ContactInfo { get; set; }
+        
+        [Required]
+        public override string? ContactInfo { get; set; }
         public Address? Address { get; set; }
-        public List<string>? Entertainments { get; set; }
-        public List<string>? ImageUrls { get; set; }
-        public double averageRating { get; set; } = 0;
+        
 
     }
 }

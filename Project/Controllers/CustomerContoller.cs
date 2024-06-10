@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using HotelBookingSystem.Models;
 using HotelBookingSystem.Services;
 using Microsoft.AspNetCore.Authorization;
+using HotelBookingSystem.interfaces;
 
 namespace HotelBookingSystem.Controllers
 {
@@ -54,7 +55,7 @@ namespace HotelBookingSystem.Controllers
             return Ok(customerDtoToReturn);
         }
 
-
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<CustomerDTO>> CreateCustomer(CustomerForCreationDTO customerDto)
         {
@@ -85,7 +86,8 @@ namespace HotelBookingSystem.Controllers
             _logger.LogInformation("Returning created customer DTO.");
             return CreatedAtRoute("GetCustomerById", new { customerId = customerToReturn.CustomerId }, customerToReturn);
         }
-
+        
+        [AllowAnonymous]
         [HttpPost("verify-email")]
         public async Task<IActionResult> VerifyEmail(VerifyEmailDTO verificationInfo)
         {
