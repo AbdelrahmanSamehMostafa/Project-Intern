@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:hotel_booking_system_frontend_flutter/Constants/urls.dart';
 import 'package:hotel_booking_system_frontend_flutter/Screens/Customer%20Screens/customer_verify_otp.dart';
 import 'package:http/http.dart' as http; // Add this line
-
 
 class CustomerRegister extends StatefulWidget {
   const CustomerRegister({super.key});
@@ -170,7 +170,7 @@ class _CustomerRegisterState extends State<CustomerRegister> {
                           }
                         });
                         if (hasError == false) {
-                          RegisterAndSendOTP();
+                          registerAndSendOTP();
                         }
                       },
                       child: const Text("Register", style: TextStyle(fontSize: 22)),
@@ -185,8 +185,8 @@ class _CustomerRegisterState extends State<CustomerRegister> {
     );
   }
 
-  Future<void> RegisterAndSendOTP() async {
-    final url = Uri.parse('http://localhost:5187/api/Customer');
+  Future<void> registerAndSendOTP() async {
+    final url = Uri.parse(customerUrl);
     final response = await http.post(
       url,
       headers: {
@@ -197,6 +197,7 @@ class _CustomerRegisterState extends State<CustomerRegister> {
         'lastName': signupLastNameController.text,
         'email': signupEmailController.text,
         'password': signupPasswordController.text,
+        'wishlists': [],
       }),
     );
 
@@ -204,18 +205,19 @@ class _CustomerRegisterState extends State<CustomerRegister> {
       // Successfully signed up
       print('Signup successful');
       Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => CustomerVerifyOTP(
-                    email: signupEmailController,
-                    firstName: signupFirstNameController,
-                    lastName: signupLastNameController,
-                    password: signupPasswordController,
-                  )));
+        context,
+        MaterialPageRoute(
+          builder: (context) => CustomerVerifyOTP(
+            email: signupEmailController,
+            firstName: signupFirstNameController,
+            lastName: signupLastNameController,
+            password: signupPasswordController,
+          ),
+        ),
+      );
     } else {
       // Error during signup
       print('Signup failed: ${response.statusCode}');
-      // Show an error message to the user
     }
   }
 }

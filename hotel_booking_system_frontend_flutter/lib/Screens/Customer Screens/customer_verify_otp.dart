@@ -1,13 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hotel_booking_system_frontend_flutter/Screens/Customer%20Screens/customer_homepage.dart';
+import 'package:hotel_booking_system_frontend_flutter/Constants/urls.dart';
+import 'package:hotel_booking_system_frontend_flutter/Functions/token_validation.dart';
 import 'package:hotel_booking_system_frontend_flutter/Screens/Main%20Screens/main_login.dart';
-import 'package:http/http.dart' as http; // Add this line
+import 'package:http/http.dart' as http;
 
 class CustomerVerifyOTP extends StatefulWidget {
   const CustomerVerifyOTP({super.key, required this.email, required this.firstName, required this.lastName, required this.password});
@@ -21,47 +21,12 @@ class CustomerVerifyOTP extends StatefulWidget {
 }
 
 class CustomerVerifyOTPState extends State<CustomerVerifyOTP> {
-  final pinController1 = TextEditingController();
-  final pinController2 = TextEditingController();
-  final pinController3 = TextEditingController();
-  final pinController4 = TextEditingController();
-  final pinController5 = TextEditingController();
-  final pinController6 = TextEditingController();
-
-  void verifyOTP() async {
-    String userOTP = pinController1.text + pinController2.text + pinController3.text + pinController4.text + pinController5.text + pinController6.text;
-
-    // Replace with your backend endpoint URL
-    String verifyOTPUrl = 'http://localhost:5187/api/Customer/verify-email';
-
-    try {
-      // Make POST request to verify OTP
-      var response = await http.post(
-        Uri.parse(verifyOTPUrl),
-        headers: {
-          'Content-Type': 'application/json', // Set content-type header
-        },
-        body: json.encode(
-          {
-            'email': widget.email.text, // Correctly pass the email
-            'otp': userOTP,
-          },
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        // Successful OTP verification
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const CustomerAndAdminLogin()));
-        print('Email verified successfully');
-      } else {
-        print('Failed to verify OTP: ${response.statusCode}');
-        // Handle other status codes if needed
-      }
-    } catch (e) {
-      print('Error verifying OTP: $e');
-      // Handle error
-    }
-  }
+  final digit1 = TextEditingController();
+  final digit2 = TextEditingController();
+  final digit3 = TextEditingController();
+  final digit4 = TextEditingController();
+  final digit5 = TextEditingController();
+  final digit6 = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -79,9 +44,7 @@ class CustomerVerifyOTPState extends State<CustomerVerifyOTP> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Image.asset("lib/assets/verify_otp.png", height: 270, width: 270
-                  // Adjust size and other properties as needed
-                  ),
+              Image.asset("lib/assets/verify_otp.png", height: 270, width: 270),
               const SizedBox(height: 15),
               const Text(
                 "Check Your Email",
@@ -110,17 +73,16 @@ class CustomerVerifyOTPState extends State<CustomerVerifyOTP> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    otpTextField(controller: pinController1),
-                    otpTextField(controller: pinController2),
-                    otpTextField(controller: pinController3),
-                    otpTextField(controller: pinController4),
-                    otpTextField(controller: pinController5),
-                    otpTextField(controller: pinController6),
+                    otpTextField(controller: digit1),
+                    otpTextField(controller: digit2),
+                    otpTextField(controller: digit3),
+                    otpTextField(controller: digit4),
+                    otpTextField(controller: digit5),
+                    otpTextField(controller: digit6),
                   ],
                 ),
               ),
               const SizedBox(height: 20),
-
               const SizedBox(height: 40),
               SizedBox(
                 width: 400,
@@ -179,5 +141,34 @@ class CustomerVerifyOTPState extends State<CustomerVerifyOTP> {
         ),
       ),
     );
+  }
+
+  void verifyOTP() async {
+    String userOTP = digit1.text + digit2.text + digit3.text + digit4.text + digit5.text + digit6.text;
+
+    final headers = await getAuthHeaders();
+
+    try {
+      var response = await http.post(
+        Uri.parse(verifyEmailUrl),
+        headers: headers,
+        body: json.encode(
+          {
+            'email': widget.email.text,
+            'otp': userOTP,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        // Successful OTP verification
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const CustomerAndAdminLogin()));
+        print('Email verified successfully');
+      } else {
+        print('Failed to verify OTP: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error verifying OTP: $e');
+    }
   }
 }
