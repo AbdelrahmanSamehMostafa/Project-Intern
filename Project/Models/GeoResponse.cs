@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace HotelBookingSystem.Models
 {
-    public class GeoResponse
+    public record GeoResponse
     {
     [JsonProperty("status")]
     public string Status { get; set; }

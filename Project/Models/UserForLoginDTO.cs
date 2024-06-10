@@ -1,6 +1,6 @@
 namespace HotelBookingSystem.Models
 {
-    public class UserForLoginDTO
+    public record UserForLoginDTO
     {
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;

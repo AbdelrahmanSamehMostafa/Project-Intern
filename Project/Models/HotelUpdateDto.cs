@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HotelBookingSystem.Models
 {
-    public class HotelUpdateDto : HotelBaseDto
+    public record HotelUpdateDto : HotelBaseDto
     {
         
         public override string Name { get; set; }

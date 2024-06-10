@@ -5,7 +5,7 @@ using HotelBookingSystem.Models;
 
 namespace HotelBookingSystem.Models
 {
-    public class HotelCreateDto : HotelBaseDto
+    public record HotelCreateDto : HotelBaseDto
     {
         [Required]
         public override string Name { get; set; }

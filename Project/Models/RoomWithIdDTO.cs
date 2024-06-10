@@ -1,6 +1,6 @@
 namespace HotelBookingSystem.Models
 {
-    public class RoomWithIdDTO : RoomDTO
+    public record RoomWithIdDTO : RoomDTO
 {
     public int RoomId { get; set; }
 }

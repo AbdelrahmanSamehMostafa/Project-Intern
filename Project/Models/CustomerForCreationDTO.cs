@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace HotelBookingSystem.Models
 {
-    public class CustomerForCreationDTO : UserForCreationDTO
+    public record CustomerForCreationDTO : UserForCreationDTO
     {
         public List<String> Wishlists { get; set; }
     }

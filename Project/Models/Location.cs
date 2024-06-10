@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace HotelBookingSystem.Models
 {
-    public class Location
+    public record Location
     {
         [JsonProperty("lat")]
         public double Latitude { get; set; }

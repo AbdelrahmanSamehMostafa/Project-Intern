@@ -31,7 +31,6 @@ public class Admin
     [Required]
     [MinLength(8)]
     public string Password { get; set; }
-
     public bool IsActive { get; set; } = false;
 
     public ICollection<Hotel>? Hotels { get; set; }

@@ -19,7 +19,6 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
         SuperAdminSeed.Seed(modelBuilder);
         AdminSeed.Seed(modelBuilder);
         CustomerSeed.Seed(modelBuilder);
@@ -27,7 +26,7 @@ public class ApplicationDbContext : DbContext
         AddressSeed.Seed(modelBuilder);
         RoomSeed.Seed(modelBuilder);
         ReviewSeed.Seed(modelBuilder);
-        BookingSeed.Seed(modelBuilder);
+        BookingSeed.Seed(modelBuilder); 
     }
 
     public void InitializeDatabase()

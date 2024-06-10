@@ -1,17 +1,14 @@
 using AutoMapper;
 using HotelBookingSystem.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using HotelBookingSystem.Models;
-using HotelBookingSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using HotelBookingSystem.interfaces;
 
 namespace HotelBookingSystem.Controllers
 {
     [Route("api/Customer")]
-    [Authorize]
+    [Authorize(Policy ="CustomerZ")]
     [ApiController]
     public class CustomerContoller : ControllerBase
     {

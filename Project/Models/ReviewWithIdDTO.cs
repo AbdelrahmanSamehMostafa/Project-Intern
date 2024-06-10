@@ -1,6 +1,6 @@
 namespace HotelBookingSystem.Models
 {
-    public class ReviewWithIdDTO : ReviewDTO
+    public record ReviewWithIdDTO : ReviewDTO
     {
 
         public int ReviewId { get; set; }

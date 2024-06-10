@@ -1,6 +1,6 @@
 namespace HotelBookingSystem.Models
 {
-    public class ReviewForCreationDTO : ReviewBaseDto
+    public record ReviewForCreationDTO : ReviewBaseDto
     {
     }
     

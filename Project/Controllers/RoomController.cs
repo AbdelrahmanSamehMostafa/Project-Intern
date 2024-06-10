@@ -39,24 +39,10 @@ namespace HotelBookingSystem.Controllers
             }
             return Ok(_mapper.Map<RoomDTO>(room));
         }
-
-        public bool IsValidRoomType(string roomTypeStr)
-        {
-            return Enum.TryParse(roomTypeStr, true, out RoomType _);
-        }
-
-
         [HttpPost]
         [Route("{HotelId}")]
         public async Task<IActionResult> CreateRoom(int HotelId, [FromBody] RoomDTO roomdto)
         {
-            // comment this check until we implement the hotel repository
-            // if(!await _hotelRepository.HotelExistsAsync(HotelId))
-            //     return NotFound();
-
-            // if(!IsValidRoomType(roomdto.RoomType))
-            //     return BadRequest();
-
             Console.WriteLine(roomdto.isAvailable);
             var roomEntity = _mapper.Map<Room>(roomdto);
             roomEntity.HotelId = HotelId;
@@ -80,9 +66,6 @@ namespace HotelBookingSystem.Controllers
 
             if(roomWithIdDTO.RoomId != roomId)
                 return BadRequest();
-
-            //|| !IsValidRoomType(roomWithIdDTO.RoomType)
-
             _mapper.Map(roomWithIdDTO, room);
             room.isAvailable = roomWithIdDTO.isAvailable;
             await _roomRepository.UpdateRoomAsync(room);

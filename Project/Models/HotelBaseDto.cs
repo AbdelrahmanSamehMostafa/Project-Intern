@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HotelBookingSystem.Models
 {
-    public class HotelBaseDto
+    public record HotelBaseDto
     {
         // [Required]
         [StringLength(100, ErrorMessage = "Name can't be longer than 100 characters")]

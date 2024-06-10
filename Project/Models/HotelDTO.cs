@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HotelBookingSystem.Models
 {
-    public class HotelDto : HotelBaseDto
+    public record HotelDto : HotelBaseDto
     {
         public int HotelId { get; set; }
 

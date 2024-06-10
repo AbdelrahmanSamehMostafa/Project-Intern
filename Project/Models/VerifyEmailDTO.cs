@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace HotelBookingSystem.Models
 {
-    public class VerifyEmailDTO
+    public record VerifyEmailDTO
     {
         public string Email { get; set; }
         public string OTP { get; set; }

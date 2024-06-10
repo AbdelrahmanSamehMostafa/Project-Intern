@@ -1,6 +1,6 @@
 namespace HotelBookingSystem.Models
 {
-    public class ReviewBaseDto
+    public record ReviewBaseDto
     {
         public string Comment { get; set; }
         

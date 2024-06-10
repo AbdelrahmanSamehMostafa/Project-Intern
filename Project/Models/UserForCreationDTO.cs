@@ -1,6 +1,6 @@
 namespace HotelBookingSystem.Models
 {
-    public class UserForCreationDTO
+    public record UserForCreationDTO
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

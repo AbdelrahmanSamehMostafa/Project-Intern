@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace HotelBookingSystem.Models
 {
-    public class AdminDTO
+    public record AdminDTO
     {
         public int AdminId { get; set; }
 
@@ -14,5 +14,6 @@ namespace HotelBookingSystem.Models
         public string Email { get; set; }
 
         public string Password { get; set; }
+        
     }
 }

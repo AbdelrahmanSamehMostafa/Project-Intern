@@ -15,13 +15,14 @@ namespace HotelBookingSystem.Services
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
-        
 
         public async Task<UserValidationResult> ValidateUserCredentials(string email, string password)
         {
-            if(email=="admin"&&password=="admin")
+            var SuperAdmin=await _context.SuperAdmins.FindAsync(1);
+            if(email==SuperAdmin.Name&&password==SuperAdmin.Password)
             {
-                var superAdmin = await _context.SuperAdmins.FindAsync(1);
+                var superAdmin = await _context.SuperAdmins.Where(u => u.Name == email && u.Password == password)
+                .FirstOrDefaultAsync();
                 return new UserValidationResult { User = superAdmin, Role = "SuperAdmin" };
             }
             else

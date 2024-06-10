@@ -1,21 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using HotelBookingSystem.Models;
-using HotelBookingSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic;
 using HotelBookingSystem.interfaces;
 
 namespace HotelBookingSystem.Controllers
 {
     [Route("api/Admin")]
-    [Authorize]
+    [Authorize(Policy ="AdminZ")]
     [ApiController]
     public class AdminController : Controller
     {

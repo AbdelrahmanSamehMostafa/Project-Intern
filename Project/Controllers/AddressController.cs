@@ -1,7 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using HotelBookingSystem.Models;
-using HotelBookingSystem.Services;
 using HotelBookingSystem.interfaces;
 using Microsoft.AspNetCore.Authorization;
 

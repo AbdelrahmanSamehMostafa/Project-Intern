@@ -9,7 +9,7 @@ using HotelBookingSystem.interfaces;
 namespace HotelBookingSystem.Controllers
 {
     [ApiController]
-    [Authorize]
+    [Authorize(Policy ="SuperAdminZ")]
     [Route("api/SuperAdmin")]
     public class SuperAdminController : ControllerBase
     {

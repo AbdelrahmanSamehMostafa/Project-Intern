@@ -1,6 +1,6 @@
 namespace HotelBookingSystem.Models
 {
-    public class RoomDTO
+    public record RoomDTO
     {
         //public RoomType RoomType { get; set; }
         

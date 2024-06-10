@@ -1,6 +1,6 @@
 namespace HotelBookingSystem.Models
 {
-    public class AddressBaseDTO
+    public record AddressBaseDTO
     {
         
         public string? City { get; set; }

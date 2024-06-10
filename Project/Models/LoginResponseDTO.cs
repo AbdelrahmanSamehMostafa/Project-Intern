@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace HotelBookingSystem.Models
 {
-    public class LoginResponseDTO
+    public record LoginResponseDTO
     {
         public string Token { get; set; }
     }

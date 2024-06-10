@@ -10,7 +10,6 @@ public class Customer
     [MinLength(2)]
     public string FirstName { get; set; }
 
-    
     [Required]
     [MaxLength(100)]
     [MinLength(2)]
@@ -25,7 +24,6 @@ public class Customer
     [MinLength(8)]
     public string Password { get; set; }
     public List<String> Wishlists { get; set; }
-
     public bool IsEmailVerified { get; set; }
 
 }

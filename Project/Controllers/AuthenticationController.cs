@@ -1,10 +1,7 @@
-using System.IdentityModel.Tokens.Jwt;
 using HotelBookingSystem.Models;
 using HotelBookingSystem.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
-using HotelBookingSystem.interfaces;
 
 namespace HotelBookingSystem.Controllers
 {
@@ -29,7 +26,7 @@ namespace HotelBookingSystem.Controllers
         {
             var user = await _validationServices.ValidateUserCredentials(userForLoginDTO.Email, userForLoginDTO.Password);
 
-            if (user == null)
+            if (user.User == null)
             {
                 return Unauthorized();
             }

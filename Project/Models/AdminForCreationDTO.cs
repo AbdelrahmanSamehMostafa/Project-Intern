@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 
 namespace HotelBookingSystem.Models
 {
-    public class AdminForCreationDTO : UserForCreationDTO
+    public record AdminForCreationDTO : UserForCreationDTO
     {  
+        
     }
 }

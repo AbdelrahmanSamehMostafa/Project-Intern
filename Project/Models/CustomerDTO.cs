@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace HotelBookingSystem.Models
 {
-    public class CustomerDTO
+    public record CustomerDTO
     {
 
         public int CustomerId { get; set; }

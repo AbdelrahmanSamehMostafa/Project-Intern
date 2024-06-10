@@ -1,8 +1,6 @@
 using HotelBookingSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using HotelBookingSystem.interfaces;
 
 [Route("api/GoogleMaps")]
 [Authorize]
