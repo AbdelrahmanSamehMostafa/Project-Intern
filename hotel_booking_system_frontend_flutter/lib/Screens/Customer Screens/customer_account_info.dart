@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_booking_system_frontend_flutter/Constants/urls.dart';
+import 'package:hotel_booking_system_frontend_flutter/Functions/token_validation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -8,10 +10,10 @@ class CustomerAccountInfo extends StatefulWidget {
   const CustomerAccountInfo({super.key, required this.custId});
 
   @override
-  _CustomerAccountInfoState createState() => _CustomerAccountInfoState();
+  CustomerAccountInfoState createState() => CustomerAccountInfoState();
 }
 
-class _CustomerAccountInfoState extends State<CustomerAccountInfo> {
+class CustomerAccountInfoState extends State<CustomerAccountInfo> {
   Map<String, dynamic>? customerData;
   bool isLoading = true;
   bool hasError = false;
@@ -23,32 +25,6 @@ class _CustomerAccountInfoState extends State<CustomerAccountInfo> {
   void initState() {
     super.initState();
     fetchCustomerData();
-  }
-
-  Future<void> fetchCustomerData() async {
-    final url = Uri.parse('http://localhost:5187/api/Customer/${widget.custId}');
-
-    try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        setState(() {
-          customerData = json.decode(response.body);
-          isLoading = false;
-
-          // Initialize text controllers with fetched data
-          nameController.text = customerData!['name'];
-          emailController.text = customerData!['email'];
-        });
-      } else {
-        throw Exception('Failed to load customer data');
-      }
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-        hasError = true;
-      });
-    }
   }
 
   @override
@@ -168,12 +144,39 @@ class _CustomerAccountInfoState extends State<CustomerAccountInfo> {
     );
   }
 
+  Future<void> fetchCustomerData() async {
+    final url = Uri.parse('$customerUrl/${widget.custId}');
+    final headers = await getAuthHeaders();
+
+    try {
+      final response = await http.get(url, headers: headers);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          customerData = json.decode(response.body);
+          isLoading = false;
+
+          // Initialize text controllers with fetched data
+          nameController.text = customerData!['name'];
+          emailController.text = customerData!['email'];
+        });
+      } else {
+        throw Exception('Failed to load customer data');
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        hasError = true;
+      });
+    }
+  }
+
   Future<void> updateCustomer() async {
     final updatedName = nameController.text;
     final updatedEmail = emailController.text;
 
-    final url = Uri.parse('http://localhost:5187/api/Customer/${widget.custId}');
-    final headers = {'Content-Type': 'application/json'};
+    final url = Uri.parse('$customerUrl/${widget.custId}');
+    final headers = await getAuthHeaders();
 
     try {
       final response = await http.put(
@@ -188,12 +191,10 @@ class _CustomerAccountInfoState extends State<CustomerAccountInfo> {
 
       if (response.statusCode == 204) {
         // Successful update
-        // You can show a success message or update the UI as needed
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Customer information updated')),
         );
-        // Refresh the displayed data after update
-        fetchCustomerData();
+        fetchCustomerData(); // Refresh the displayed data after update
       } else {
         throw Exception('Failed to update customer information');
       }

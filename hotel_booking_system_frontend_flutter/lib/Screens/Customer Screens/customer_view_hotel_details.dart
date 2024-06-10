@@ -1,10 +1,12 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:hotel_booking_system_frontend_flutter/Constants/urls.dart';
+import 'package:hotel_booking_system_frontend_flutter/Functions/token_validation.dart';
 import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
-
 import 'package:hotel_booking_system_frontend_flutter/Model/hotel.dart';
-
 import 'package:url_launcher/url_launcher.dart';
 
 class CustomerViewHotelDetails extends StatefulWidget {
@@ -14,10 +16,10 @@ class CustomerViewHotelDetails extends StatefulWidget {
   const CustomerViewHotelDetails({super.key, required this.hotel, required this.custId});
 
   @override
-  _CustomerViewHotelDetailsState createState() => _CustomerViewHotelDetailsState();
+  CustomerViewHotelDetailsState createState() => CustomerViewHotelDetailsState();
 }
 
-class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
+class CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
   late CarouselController _carouselController;
   bool isInWishlist = false; // Track if the hotel is in the wishlist initially
   double? temperature;
@@ -36,159 +38,6 @@ class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
     fetchReviews(); // Fetch reviews when widget initializes
   }
 
-  Future<void> fetchReviews() async {
-    final hotelId = widget.hotel.hotelId;
-    final Uri uri = Uri.parse('http://localhost:5187/api/Reviews/Hotel/$hotelId');
-
-    try {
-      final response = await http.get(uri);
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> fetchedData = jsonDecode(response.body);
-
-        setState(() {
-          reviews = fetchedData['reviews'];
-          averageRating = fetchedData['averageRating'];
-        });
-      } else {
-        print('Failed to fetch reviews. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error fetching reviews: $e');
-    }
-  }
-
-  Future<void> checkWishlistStatus() async {
-    final customerId = 1; // Replace with actual customer ID
-    final hotelId = widget.hotel.hotelId;
-
-    final Uri uri = Uri.parse('http://localhost:5187/api/Customer/$customerId/hotels');
-
-    try {
-      final response = await http.get(uri);
-
-      if (response.statusCode == 200) {
-        final List<dynamic> wishlistHotels = jsonDecode(response.body);
-        setState(() {
-          isInWishlist = wishlistHotels.any((hotel) => hotel['hotelId'] == hotelId);
-        });
-      } else {
-        print('Failed to fetch wishlist hotels. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error checking wishlist status: $e');
-    }
-  }
-
-  Future<void> fetchWeatherData() async {
-    final hotelId = widget.hotel.hotelId;
-    final Uri uri = Uri.parse('http://localhost:5187/weather/$hotelId');
-
-    try {
-      final response = await http.get(uri);
-
-      if (response.statusCode == 200) {
-        final dynamic jsonData = jsonDecode(response.body);
-
-        setState(() {
-          temperature = jsonData['temperature'];
-          humidity = jsonData['humidity'];
-          windSpeed = jsonData['windSpeed'];
-        });
-      } else {
-        print('Failed to fetch weather data. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error fetching weather data: $e');
-    }
-  }
-
-  Future<void> toggleWishlist() async {
-    final customerId = 1; // Replace with actual customer ID
-    final hotelId = widget.hotel.hotelId;
-
-    final Uri uri = Uri.parse('http://localhost:5187/api/Customer/$customerId/hotels/$hotelId');
-
-    try {
-      if (isInWishlist) {
-        final response = await http.delete(uri);
-        if (response.statusCode == 204) {
-          setState(() {
-            isInWishlist = false;
-          });
-        } else {
-          print('Failed to remove hotel from wishlist. Status code: ${response.statusCode}');
-        }
-      } else {
-        final response = await http.post(
-          uri,
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-        );
-
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          setState(() {
-            isInWishlist = true;
-          });
-        } else {
-          print('Failed to add hotel to wishlist. Status code: ${response.statusCode}');
-        }
-      }
-    } catch (e) {
-      print('Error adding/removing hotel to/from wishlist: $e');
-    }
-  }
-
-  String formatDateTime(String dateTimeString) {
-    DateTime dateTime = DateTime.parse(dateTimeString);
-    Duration difference = DateTime.now().difference(dateTime);
-
-    if (difference.inSeconds < 5) {
-      return 'just now';
-    } else if (difference.inMinutes < 1) {
-      return '${difference.inSeconds} seconds ago';
-    } else if (difference.inHours < 1) {
-      return '${difference.inMinutes} minutes ago';
-    } else if (difference.inDays < 1) {
-      return '${difference.inHours} hours ago';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays} days ago';
-    } else {
-      int years = (difference.inDays / 365).floor();
-      return years <= 1 ? 'one year ago' : '$years years ago';
-    }
-  }
-
-  Future<void> submitReview(String comment, int rating) async {
-    final customerId = widget.custId;
-    final hotelId = widget.hotel.hotelId;
-
-    final Uri uri = Uri.parse('http://localhost:5187/api/Reviews/$customerId/$hotelId');
-
-    try {
-      final response = await http.post(
-        uri,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode({
-          'comment': comment,
-          'rating': rating,
-        }),
-      );
-
-      if (response.statusCode == 201) {
-        // Refresh reviews and averageRating after successful submission
-        fetchReviews();
-      } else {
-        print('Failed to submit review. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error submitting review: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -198,7 +47,7 @@ class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // Navigate back to the previous screen
+            Navigator.pop(context);
           },
         ),
         actions: [
@@ -343,7 +192,7 @@ class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
             ),
             const SizedBox(height: 5),
             Text(
-              widget.hotel.description ?? 'No description available',
+              widget.hotel.description,
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 20),
@@ -355,12 +204,11 @@ class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
             Wrap(
               spacing: 10,
               runSpacing: 10,
-              children: widget.hotel.entertainments?.map((entertainment) {
-                    return Chip(
-                      label: Text(entertainment),
-                    );
-                  }).toList() ??
-                  [const Text('No entertainments available')],
+              children: widget.hotel.entertainments.map((entertainment) {
+                return Chip(
+                  label: Text(entertainment),
+                );
+              }).toList(),
             ),
             const SizedBox(height: 20),
             const Text(
@@ -621,6 +469,7 @@ class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
   }
 
   void generateRoute() async {
+    final headers = await getAuthHeaders();
     String hotelName = "${widget.hotel.name} ${widget.hotel.address.city} ${widget.hotel.address.country}";
     print(hotelName);
     String address = addressController.text;
@@ -631,10 +480,13 @@ class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
     double addressLongitude;
 
     // Call API to fetch coordinates based on hotel name
-    final Uri hotelNameUri = Uri.parse('http://localhost:5187/api/GoogleMaps/getCoordinates?address=$hotelName');
+    final Uri hotelNameUri = Uri.parse('$googleMapsUrl/getCoordinates?address=$hotelName');
 
     try {
-      final responseHotelName = await http.get(hotelNameUri);
+      final responseHotelName = await http.get(
+        hotelNameUri,
+        headers: headers,
+      );
 
       if (responseHotelName.statusCode == 200) {
         final dynamic jsonDataHotelName = jsonDecode(responseHotelName.body);
@@ -653,10 +505,13 @@ class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
     }
 
     // Call API to fetch coordinates based on address
-    final Uri addressUri = Uri.parse('http://localhost:5187/api/GoogleMaps/getCoordinates?address=$address');
+    final Uri addressUri = Uri.parse('$googleMapsUrl/getCoordinates?address=$address');
 
     try {
-      final responseAddress = await http.get(addressUri);
+      final responseAddress = await http.get(
+        addressUri,
+        headers: headers,
+      );
 
       if (responseAddress.statusCode == 200) {
         final dynamic jsonDataAddress = jsonDecode(responseAddress.body);
@@ -675,10 +530,13 @@ class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
     }
 
     // Call API to fetch route and ETA
-    final routeUri = Uri.parse('http://localhost:5187/api/GoogleMaps/RouteWithETA?originLat=$hotelNameLatitude&originLng=$hotelNameLongitude&destLat=$addressLatitude&destLng=$addressLongitude');
+    final routeUri = Uri.parse('$googleMapsUrl/RouteWithETA?originLat=$hotelNameLatitude&originLng=$hotelNameLongitude&destLat=$addressLatitude&destLng=$addressLongitude');
 
     try {
-      final responseRoute = await http.get(routeUri);
+      final responseRoute = await http.get(
+        routeUri,
+        headers: headers,
+      );
 
       if (responseRoute.statusCode == 200) {
         final dynamic jsonDataRoute = jsonDecode(responseRoute.body);
@@ -689,13 +547,181 @@ class _CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
         launchGoogleMapsRoute(hotelNameLatitude, hotelNameLongitude, addressLatitude, addressLongitude, route);
         print('Route: $route');
         print('Duration: $duration');
-
-        // Handle route and duration as needed (e.g., show on UI, store in state variables)
       } else {
         print('Failed to fetch route and duration. Status code: ${responseRoute.statusCode}');
       }
     } catch (e) {
       print('Error fetching route and duration: $e');
+    }
+  }
+
+  Future<void> fetchReviews() async {
+    final hotelId = widget.hotel.hotelId;
+    final Uri uri = Uri.parse('$reviewUrl/HotelReviews/$hotelId');
+    final headers = await getAuthHeaders();
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> fetchedData = jsonDecode(response.body);
+
+        setState(() {
+          reviews = fetchedData['reviews'];
+          averageRating = fetchedData['averageRating'];
+        });
+      } else {
+        print('Failed to fetch reviews. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching reviews: $e');
+    }
+  }
+
+  Future<void> checkWishlistStatus() async {
+    final customerId = widget.custId;
+    final hotelId = widget.hotel.hotelId;
+    final headers = await getAuthHeaders();
+
+    final Uri uri = Uri.parse('$customerUrl/$customerId/hotels');
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> wishlistHotels = jsonDecode(response.body);
+        setState(() {
+          isInWishlist = wishlistHotels.any((hotel) => hotel['hotelId'] == hotelId);
+        });
+      } else {
+        print('Failed to fetch wishlist hotels. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error checking wishlist status: $e');
+    }
+  }
+
+  Future<void> fetchWeatherData() async {
+    final hotelId = widget.hotel.hotelId;
+    final headers = await getAuthHeaders();
+    final Uri uri = Uri.parse('$weatherUrl/$hotelId');
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic jsonData = jsonDecode(response.body);
+
+        setState(() {
+          temperature = jsonData['temperature'];
+          humidity = jsonData['humidity'];
+          windSpeed = jsonData['windSpeed'];
+        });
+      } else {
+        print('Failed to fetch weather data. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching weather data: $e');
+    }
+  }
+
+  Future<void> toggleWishlist() async {
+    final customerId = widget.custId;
+    final hotelId = widget.hotel.hotelId;
+    final headers = await getAuthHeaders();
+    final Uri uri = Uri.parse('$customerUrl/$customerId/hotels/$hotelId');
+
+    try {
+      if (isInWishlist) {
+        final response = await http.delete(
+          uri,
+          headers: headers,
+        );
+        if (response.statusCode == 204) {
+          setState(() {
+            isInWishlist = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Hotel removed from your Wishlist')),
+          );
+        } else {
+          print('Failed to remove hotel from wishlist. Status code: ${response.statusCode}');
+        }
+      } else {
+        final response = await http.post(
+          uri,
+          headers: headers,
+        );
+
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          setState(() {
+            isInWishlist = true;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Hotel added to your Wishlist')),
+          );
+        } else {
+          print('Failed to add hotel to wishlist. Status code: ${response.statusCode}');
+        }
+      }
+    } catch (e) {
+      print('Error adding/removing hotel to/from wishlist: $e');
+    }
+  }
+
+  String formatDateTime(String dateTimeString) {
+    DateTime dateTime = DateTime.parse(dateTimeString);
+    Duration difference = DateTime.now().difference(dateTime);
+
+    if (difference.inSeconds < 5) {
+      return 'just now';
+    } else if (difference.inMinutes < 1) {
+      return '${difference.inSeconds} seconds ago';
+    } else if (difference.inHours < 1) {
+      return '${difference.inMinutes} minutes ago';
+    } else if (difference.inDays < 1) {
+      return '${difference.inHours} hours ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} days ago';
+    } else {
+      int years = (difference.inDays / 365).floor();
+      return years <= 1 ? 'one year ago' : '$years years ago';
+    }
+  }
+
+  Future<void> submitReview(String comment, int rating) async {
+    final customerId = widget.custId;
+    final hotelId = widget.hotel.hotelId;
+
+    final Uri uri = Uri.parse('$reviewUrl/$customerId/$hotelId');
+    final headers = await getAuthHeaders();
+
+    try {
+      final response = await http.post(
+        uri,
+        headers: headers,
+        body: jsonEncode({
+          'comment': comment,
+          'rating': rating,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        fetchReviews(); // Refresh reviews and averageRating after successful submission
+      } else {
+        print('Failed to submit review. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error submitting review: $e');
     }
   }
 }

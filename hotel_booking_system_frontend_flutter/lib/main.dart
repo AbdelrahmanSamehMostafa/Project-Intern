@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Hotel Booking System',
-      home: WelcomeScreen(),
+      home: CustomerHomePage(custId: 1,),
     );
   }
 }

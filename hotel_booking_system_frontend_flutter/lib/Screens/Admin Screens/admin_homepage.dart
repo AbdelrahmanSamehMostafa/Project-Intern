@@ -1,10 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hotel_booking_system_frontend_flutter/Screens/Main%20Screens/welcome_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminHomePage extends StatelessWidget {
-  const AdminHomePage({Key? key});
+  const AdminHomePage({super.key});
 
   Future<void> _signOut(BuildContext context) async {
     // Clear token from local storage

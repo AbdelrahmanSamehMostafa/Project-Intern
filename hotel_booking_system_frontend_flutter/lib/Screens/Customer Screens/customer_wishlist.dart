@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:hotel_booking_system_frontend_flutter/Constants/urls.dart';
+import 'package:hotel_booking_system_frontend_flutter/Functions/token_validation.dart';
+import 'package:hotel_booking_system_frontend_flutter/Model/hotel.dart';
+import 'package:hotel_booking_system_frontend_flutter/widgets/hotel_list_tile.dart';
 import 'package:http/http.dart' as http;
-import '../../Model/hotel.dart';
-import '../../widgets/hotel_list_tile.dart';
+
 import 'customer_view_hotel_details.dart';
 
 class CustomerWishlist extends StatefulWidget {
@@ -15,42 +18,14 @@ class CustomerWishlist extends StatefulWidget {
 }
 
 class CustomerWishlistState extends State<CustomerWishlist> {
-  late List<Hotel> wishlistHotels = []; // List to store fetched wishlist hotels
+  List<Hotel> wishlistHotels = []; // List to store fetched wishlist hotels
+  bool isLoading = false;
+  bool isError = false;
 
   @override
   void initState() {
     super.initState();
     fetchWishlistHotels();
-  }
-
-  Future<void> fetchWishlistHotels() async {
-    final Uri uri = Uri.parse('http://localhost:5187/api/Customer/${widget.customerId}/hotels');
-
-    try {
-      final response = await http.get(uri);
-
-      if (response.statusCode == 200) {
-        final dynamic jsonData = jsonDecode(response.body);
-
-        // Check if jsonData is not null and is a List
-        if (jsonData != null && jsonData is List) {
-          setState(() {
-            wishlistHotels = jsonData.map((json) => Hotel.fromJson(json)).toList();
-          });
-        } else {
-          throw Exception('Failed to parse wishlist hotels data');
-        }
-      } else {
-        throw Exception('Failed to load wishlist hotels: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error fetching wishlist hotels: $e');
-      // Handle error, show an error message to the user
-    }
-  }
-
-  void navigateToHotelDetails(Hotel hotel) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerViewHotelDetails(hotel: hotel, custId: widget.customerId)));
   }
 
   @override
@@ -64,18 +39,76 @@ class CustomerWishlistState extends State<CustomerWishlist> {
         centerTitle: true,
         backgroundColor: Colors.grey,
       ),
-      body: wishlistHotels.isEmpty
+      body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: wishlistHotels.length,
-              itemBuilder: (context, index) {
-                final hotel = wishlistHotels[index];
-                return HotelListTile(
-                  hotel: hotel,
-                  onTap: () => navigateToHotelDetails(hotel),
-                );
-              },
-            ),
+          : isError
+              ? const Center(
+                  child: Text('Failed to load wishlist hotels'),
+                )
+              : wishlistHotels.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'Your wishlist is empty',
+                        style: TextStyle(fontSize: 35),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: wishlistHotels.length,
+                      itemBuilder: (context, index) {
+                        final hotel = wishlistHotels[index];
+                        return HotelListTile(
+                          hotel: hotel,
+                          onTap: () => navigateToHotelDetails(hotel),
+                        );
+                      },
+                    ),
     );
+  }
+
+  Future<void> fetchWishlistHotels() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final Uri uri = Uri.parse('$customerUrl/${widget.customerId}/hotels');
+    final headers = await getAuthHeaders();
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic jsonData = jsonDecode(response.body);
+
+        // Check if jsonData is not null and is a List
+        if (jsonData != null && jsonData is List) {
+          setState(() {
+            wishlistHotels = jsonData.map((json) => Hotel.fromJson(json)).toList();
+            isLoading = false;
+          });
+        } else {
+          throw Exception('Failed to parse wishlist hotels data');
+        }
+      } else if (response.statusCode == 404) {
+        // Wishlist is empty
+        setState(() {
+          isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load wishlist hotels: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching wishlist hotels: $e');
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+    }
+  }
+
+  void navigateToHotelDetails(Hotel hotel) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerViewHotelDetails(hotel: hotel, custId: widget.customerId)));
   }
 }
