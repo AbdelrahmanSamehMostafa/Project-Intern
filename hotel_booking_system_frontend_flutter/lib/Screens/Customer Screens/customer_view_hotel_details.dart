@@ -221,89 +221,106 @@ class CustomerViewHotelDetailsState extends State<CustomerViewHotelDetails> {
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'Images:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 5),
-            SizedBox(
-              height: 200,
-              child: Stack(
-                children: [
-                  CarouselSlider(
-                    carouselController: _carouselController,
-                    items: widget.hotel.imageUrls.map((imageUrl) {
-                      return Builder(
-                        builder: (BuildContext context) {
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Scaffold(
-                                    appBar: AppBar(),
-                                    body: Center(
-                                      child: Hero(
-                                        tag: imageUrl,
-                                        child: Image.network(
-                                          imageUrl,
-                                          fit: BoxFit.contain,
-                                          height: double.infinity,
-                                          width: double.infinity,
+            if (widget.hotel.imageUrls.length > 1) ...[
+              const Text(
+                'Images:',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5),
+              SizedBox(
+                height: 200,
+                child: Stack(
+                  children: [
+                    if (widget.hotel.imageUrls.isNotEmpty) ...[
+                      CarouselSlider(
+                        carouselController: _carouselController,
+                        items: widget.hotel.imageUrls.map((imageUrl) {
+                          return Builder(
+                            builder: (BuildContext context) {
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Scaffold(
+                                        appBar: AppBar(),
+                                        body: Center(
+                                          child: Hero(
+                                            tag: imageUrl,
+                                            child: Image.network(
+                                              imageUrl,
+                                              fit: BoxFit.contain,
+                                              height: double.infinity,
+                                              width: double.infinity,
+                                            ),
+                                          ),
                                         ),
                                       ),
+                                    ),
+                                  );
+                                },
+                                child: Hero(
+                                  tag: imageUrl,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: Image.network(
+                                      imageUrl,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
                               );
                             },
-                            child: Hero(
-                              tag: imageUrl,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8.0),
-                                child: Image.network(
-                                  imageUrl,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
                           );
-                        },
-                      );
-                    }).toList(),
-                    options: CarouselOptions(
-                      height: 200,
-                      enableInfiniteScroll: false,
-                      enlargeCenterPage: true,
-                      viewportFraction: 0.9,
-                      initialPage: 0,
-                    ),
-                  ),
-                  Positioned(
-                    top: 0,
-                    bottom: 0,
-                    left: 10,
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back_ios),
-                      onPressed: () {
-                        _carouselController.previousPage();
-                      },
-                    ),
-                  ),
-                  Positioned(
-                    top: 0,
-                    bottom: 0,
-                    right: 10,
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () {
-                        _carouselController.nextPage();
-                      },
-                    ),
-                  ),
-                ],
+                        }).toList(),
+                        options: CarouselOptions(
+                          height: 200,
+                          enableInfiniteScroll: false,
+                          enlargeCenterPage: true,
+                          viewportFraction: 0.9,
+                          initialPage: 0,
+                        ),
+                      ),
+                      Positioned(
+                        top: 0,
+                        bottom: 0,
+                        left: 10,
+                        child: IconButton(
+                          icon: const Icon(Icons.arrow_back_ios),
+                          onPressed: () {
+                            _carouselController.previousPage();
+                          },
+                        ),
+                      ),
+                      Positioned(
+                        top: 0,
+                        bottom: 0,
+                        right: 10,
+                        child: IconButton(
+                          icon: const Icon(Icons.arrow_forward_ios),
+                          onPressed: () {
+                            _carouselController.nextPage();
+                          },
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ),
-            ),
+            ] else ...[
+              const Text(
+                'Images:',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5),
+              const SizedBox(
+                height: 30,
+                child: Text(
+                  'Unfortunately, No Images for this hotel..',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ],
             if (reviews.isNotEmpty) ...[
               const SizedBox(height: 20),
               const Text(

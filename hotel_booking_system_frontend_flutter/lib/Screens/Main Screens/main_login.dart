@@ -176,7 +176,7 @@ class _CustomerAndAdminLoginState extends State<CustomerAndAdminLogin> {
       } else if (role == 'Admin') {
         final isActive = await getAdminStatus(id);
         if (isActive) {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AdminHomePage()));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AdminHomePage(adminId: id)));
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
