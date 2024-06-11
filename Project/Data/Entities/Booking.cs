@@ -6,13 +6,7 @@ public class Booking
 {
     [Key]
     public int BookingId { get; set; }
-
-    [Required]
-    public int CustomerId { get; set; }
-
-    [Required]
-    public int RoomId { get; set; }
-
+    
     [Required]
     public DateTime CheckInDate { get; set; }
 
@@ -23,8 +17,12 @@ public class Booking
     [StringLength(50)]
     public string? Status { get; set; }
 
+    public int CustomerId { get; set; }
+
     [ForeignKey("CustomerId")]
     public Customer Customer { get; set; }
+
+    public int RoomId { get; set; }
 
     [ForeignKey("RoomId")]
     public Room Room { get; set; }

@@ -78,6 +78,7 @@ public static class ServiceExtensions
         services.AddScoped<IAddressRepository, AddressRepository>();
         services.AddScoped<IHotelRepository, HotelRepository>();
         services.AddScoped<ISuperAdminRepository, SuperAdminRepository>();
+        services.AddScoped<IBookingRepository, BookingRepository>();
         services.AddScoped<TokenServices>();
         services.AddScoped<ValidationServices>();
 

@@ -22,6 +22,7 @@ public class Room
     [Required]
     [Range(0, 10000)]
     public double Price { get; set; }
+    public bool isBooked { get; set; }
 
     [Required]
     public bool isAvailable { get; set; }
