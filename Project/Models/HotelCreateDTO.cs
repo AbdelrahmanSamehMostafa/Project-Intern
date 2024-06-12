@@ -7,8 +7,7 @@ namespace HotelBookingSystem.Models
 {
     public record HotelCreateDto : HotelBaseDto
     {
-        [Required]
-        public override string Name { get; set; }
+
 
         [Required]
         public int AdminId { get; set; }

@@ -6,104 +6,104 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HotelBookingSystem.Services
 {
-public class BookingRepository : IBookingRepository
-{
-    private readonly ApplicationDbContext _context;
-
-    public BookingRepository(ApplicationDbContext context)
+    public class BookingRepository : IBookingRepository
     {
-        _context = context;
-    }
+        private readonly ApplicationDbContext _context;
 
-    public async Task<IEnumerable<Booking>> GetAllBookingsAsync()
-    {
-        return await _context.Bookings.AsNoTracking().Include(b => b.Customer).Include(b => b.Room).ToListAsync();
-    }
-
-    public async Task<IEnumerable<Booking>> GetBookingsByHotelIdAsync(int hotelId)
-    {
-        return await _context.Bookings.AsNoTracking().Include(b => b.Customer).Include(b => b.Room)
-            .Where(b => b.Room.HotelId == hotelId).ToListAsync();
-    }
-
-    public async Task<Booking> GetBookingByIdAsync(int id)
-    {
-         var booking = await _context.Bookings.AsNoTracking().Include(b => b.Customer).Include(b => b.Room)
-            .FirstOrDefaultAsync(b => b.BookingId == id);
-
-            if (booking != null){return booking;}
-
-        return null;
-    }
-
-    public async Task<IActionResult> AddBookingAsync(Booking booking)
-    {
-        if (booking.RoomId == 0)
+        public BookingRepository(ApplicationDbContext context)
         {
-            return new BadRequestObjectResult(new { Message = "RoomId cannot be null or zero." });
+            _context = context;
         }
 
-        var room = await _context.Rooms.FindAsync(booking.RoomId);
-
-        if (room == null)
+        public async Task<IEnumerable<Booking>> GetAllBookingsAsync()
         {
-            return new NotFoundObjectResult(new { Message = "Room not found." });
+            return await _context.Bookings.AsNoTracking().Include(b => b.Customer).Include(b => b.Room).ToListAsync();
         }
 
-        if (room.isAvailable && !room.isBooked)
+        public async Task<IEnumerable<Booking>> GetBookingsByHotelIdAsync(int hotelId)
         {
-            room.isBooked = true;
-            _context.Bookings.Add(booking);
-            await _context.SaveChangesAsync();
-            return new OkObjectResult(booking);
+            return await _context.Bookings.AsNoTracking().Include(b => b.Customer).Include(b => b.Room)
+                .Where(b => b.Room.HotelId == hotelId).ToListAsync();
         }
-        else
-        {
-            return new BadRequestObjectResult(new { Message = "Room is not available or already booked." });
-        }
-    }
 
-        public async Task<IActionResult> UpdateBookingAsync(Booking booking)
+        public async Task<Booking> GetBookingByIdAsync(int id)
         {
-        try
-        {
-            _context.Entry(booking).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return new NoContentResult();
+            var booking = await _context.Bookings.AsNoTracking().Include(b => b.Customer).Include(b => b.Room)
+               .FirstOrDefaultAsync(b => b.BookingId == id);
+
+            if (booking != null) { return booking; }
+
+            return null;
         }
-        catch (DbUpdateConcurrencyException)
+
+        public async Task<IActionResult> AddBookingAsync(Booking booking)
         {
-            if (!BookingExists(booking.BookingId))
+            if (booking.RoomId == 0)
             {
-                return new NotFoundResult();
+                return new BadRequestObjectResult(new { Message = "RoomId cannot be null or zero." });
+            }
+
+            var room = await _context.Rooms.FindAsync(booking.RoomId);
+
+            if (room == null)
+            {
+                return new NotFoundObjectResult(new { Message = "Room not found." });
+            }
+
+            if (room.isAvailable && !room.isBooked)
+            {
+                room.isBooked = true;
+                _context.Bookings.Add(booking);
+                await _context.SaveChangesAsync();
+                return new OkObjectResult(booking);
             }
             else
             {
-                throw;
+                return new BadRequestObjectResult(new { Message = "Room is not available or already booked." });
             }
         }
-        }
 
-private bool BookingExists(int id)
-{
-    return _context.Bookings.Any(e => e.BookingId == id);
-}
-
-
-    public async Task DeleteBookingAsync(int id)
-    {
-        var booking = await _context.Bookings.FindAsync(id);
-        if (booking != null)
+        public async Task<IActionResult> UpdateBookingAsync(Booking booking)
         {
-            _context.Bookings.Remove(booking);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Entry(booking).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return new NoContentResult();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!BookingExists(booking.BookingId))
+                {
+                    return new NotFoundResult();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private bool BookingExists(int id)
+        {
+            return _context.Bookings.Any(e => e.BookingId == id);
+        }
+
+
+        public async Task DeleteBookingAsync(int id)
+        {
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking != null)
+            {
+                _context.Bookings.Remove(booking);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<IEnumerable<Booking>> GetBookingsByCustomerIdAsync(int customerId)
+        {
+            return await _context.Bookings.AsNoTracking().Include(b => b.Customer).Include(b => b.Room)
+                .Where(b => b.CustomerId == customerId).ToListAsync();
         }
     }
-
-     public async Task<IEnumerable<Booking>> GetBookingsByCustomerIdAsync(int customerId)
-    {
-        return await _context.Bookings.AsNoTracking().Include(b => b.Customer).Include(b => b.Room)
-            .Where(b => b.CustomerId == customerId).ToListAsync();
-    }
-}
 }

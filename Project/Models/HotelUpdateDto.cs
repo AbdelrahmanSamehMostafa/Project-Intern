@@ -3,12 +3,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HotelBookingSystem.Models
 {
-    public record HotelUpdateDto : HotelBaseDto
+    public record HotelUpdateDto
     {
-        
-        public override string Name { get; set; }
 
-        public override string? ContactInfo { get; set; }
-        public double Rating { get; set; }
+        public string Name { get; set; }
+        public AddressBaseDTO Address { get; set; }
+        public string Description { get; set; }
+        public List<string> Entertainments { get; set; }
+        public List<string>? ImageUrls { get; set; }
     }
 }

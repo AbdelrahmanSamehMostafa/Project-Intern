@@ -22,7 +22,7 @@ public static class RoomSeed
                 RoomType = RoomType.Double,
                 Description = "A double room",
                 Price = 400,
-                isAvailable = true,
+                isAvailable = false,
                 isBooked = true
             },
             new Room

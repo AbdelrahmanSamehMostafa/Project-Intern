@@ -65,21 +65,21 @@ namespace HotelBookingSystem.Controllers
             return StatusCode(201);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateHotel(int id, HotelUpdateDto hotelUpdateDto)
+        [HttpPut("{hotelId}")]
+        public async Task<IActionResult> UpdateHotel(int hotelId, HotelUpdateDto hotelUpdateDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var existingHotel = await _hotelRepo.GetHotelById(id);
+            var existingHotel = await _hotelRepo.GetHotelById(hotelId);
             if (existingHotel == null)
             {
                 return NotFound();
             }
 
-            await _hotelRepo.UpdateHotel(id, hotelUpdateDto);
+            await _hotelRepo.UpdateHotel(hotelId, hotelUpdateDto);
 
             return NoContent();
         }

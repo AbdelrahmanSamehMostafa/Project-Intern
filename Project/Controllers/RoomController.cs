@@ -13,12 +13,14 @@ namespace HotelBookingSystem.Controllers
     public class RoomController : ControllerBase
     {
         private readonly IRoomRepository _roomRepository;
+        private readonly IHotelRepository _hotelRepository;
         private readonly IMapper _mapper;
 
-        public RoomController(IRoomRepository roomRepository, IMapper mapper)
+        public RoomController(IRoomRepository roomRepository, IMapper mapper, IHotelRepository hotelRepository)
         {
             _roomRepository = roomRepository ?? throw new ArgumentNullException(nameof(roomRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _hotelRepository = hotelRepository ?? throw new ArgumentNullException(nameof(hotelRepository));
         }
 
         [HttpGet]
@@ -32,7 +34,7 @@ namespace HotelBookingSystem.Controllers
         public async Task<IActionResult> GetRoomsByHotelId(int hotelId)
         {
             var rooms = await _roomRepository.GetRoomsByHotelIdAsync(hotelId);
-            return Ok(_mapper.Map<IEnumerable<RoomDTO>>(rooms));
+            return Ok(_mapper.Map<IEnumerable<RoomWithIdDTO>>(rooms));
         }
 
         [HttpGet]
@@ -51,7 +53,6 @@ namespace HotelBookingSystem.Controllers
         [Route("{HotelId}")]
         public async Task<IActionResult> CreateRoom(int HotelId, [FromBody] RoomDTO roomdto)
         {
-            Console.WriteLine(roomdto.isAvailable);
             var roomEntity = _mapper.Map<Room>(roomdto);
             roomEntity.HotelId = HotelId;
 
@@ -59,8 +60,10 @@ namespace HotelBookingSystem.Controllers
 
             var roomToReturn = _mapper.Map<RoomWithIdDTO>(roomEntity);
             roomToReturn.isAvailable = roomdto.isAvailable;
+
             return CreatedAtRoute("GetRoomById", new { roomId = roomToReturn.RoomId }, roomToReturn);
         }
+
 
         [HttpPut]
         [Route("{roomId}")]
