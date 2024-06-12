@@ -18,7 +18,7 @@ class _AdminViewHotelDetailsState extends State<AdminViewHotelDetails> {
   late TextEditingController nameController;
   late TextEditingController addressController;
   late TextEditingController descriptionController;
-  late TextEditingController ratingController;
+
   List<String> entertainments = [];
   List<String> imageUrls = [];
   List<Room> rooms = []; // List to store added rooms
@@ -31,7 +31,6 @@ class _AdminViewHotelDetailsState extends State<AdminViewHotelDetails> {
     nameController = TextEditingController();
     addressController = TextEditingController();
     descriptionController = TextEditingController();
-    ratingController = TextEditingController();
     _fetchHotelDetails();
     _fetchRoomsByHotelId(); // Fetch rooms data when initializing
   }
@@ -42,7 +41,6 @@ class _AdminViewHotelDetailsState extends State<AdminViewHotelDetails> {
     nameController.dispose();
     addressController.dispose();
     descriptionController.dispose();
-    ratingController.dispose();
     super.dispose();
   }
 
@@ -61,7 +59,6 @@ class _AdminViewHotelDetailsState extends State<AdminViewHotelDetails> {
           nameController.text = jsonData['name'];
           addressController.text = '${jsonData['address']['city']}, ${jsonData['address']['country']}';
           descriptionController.text = jsonData['description'];
-          ratingController.text = jsonData['rating'].toString();
           entertainments = List<String>.from(jsonData['entertainments']);
           imageUrls = List<String>.from(jsonData['imageUrls']);
           _isLoading = false;
@@ -114,11 +111,18 @@ class _AdminViewHotelDetailsState extends State<AdminViewHotelDetails> {
   }
 
   Future<void> _submitEdits() async {
+    // Extract city and country from the address field
+    final addressParts = addressController.text.split(', ');
+    final city = addressParts.length > 0 ? addressParts[0] : '';
+    final country = addressParts.length > 1 ? addressParts[1] : '';
+
     final updatedData = {
       'name': nameController.text,
-      'address': addressController.text,
+      'address': {
+        'city': city,
+        'country': country,
+      },
       'description': descriptionController.text,
-      'rating': double.parse(ratingController.text),
       'entertainments': entertainments,
       'imageUrls': imageUrls,
     };
@@ -129,10 +133,7 @@ class _AdminViewHotelDetailsState extends State<AdminViewHotelDetails> {
     try {
       final response = await http.put(
         url,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          ...headers,
-        },
+        headers: headers,
         body: jsonEncode(updatedData),
       );
 
@@ -163,7 +164,7 @@ class _AdminViewHotelDetailsState extends State<AdminViewHotelDetails> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('Error'),
-              content: const Text('Failed to update hotel details'),
+              content: Text('Failed to update hotel details: ${response.body}'),
               actions: <Widget>[
                 TextButton(
                   child: const Text('OK'),
@@ -215,6 +216,7 @@ class _AdminViewHotelDetailsState extends State<AdminViewHotelDetails> {
             description: roomData['description'],
             price: roomData['price'],
             isAvailable: roomData['isAvailable'],
+            isBooked: roomData['isBooked'],
           );
           fetchedRooms.add(room);
         });
@@ -333,18 +335,7 @@ class _AdminViewHotelDetailsState extends State<AdminViewHotelDetails> {
             ],
           ),
           const SizedBox(height: 10),
-          Row(
-            children: [
-              const Text(
-                'Rating: ',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                ratingController.text,
-                style: const TextStyle(fontSize: 20),
-              ),
-            ],
-          ),
+
           const SizedBox(height: 10),
           const Text(
             'Entertainments:',
@@ -438,6 +429,7 @@ class _AdminViewHotelDetailsState extends State<AdminViewHotelDetails> {
     final TextEditingController descriptionController = TextEditingController();
     bool isAvailable = true; // Default value
     String roomType = 'Single'; // Default value
+    bool isBooked = false;
 
     await showDialog(
       context: context,
@@ -550,6 +542,7 @@ class _AdminViewHotelDetailsState extends State<AdminViewHotelDetails> {
                               price: double.tryParse(priceController.text) ?? 0.0,
                               description: descriptionController.text,
                               isAvailable: isAvailable,
+                              isBooked: isBooked,
                             );
                             addRoom(widget.hotelId, newRoom);
                             setState(() {
@@ -644,19 +637,6 @@ class _AdminViewHotelDetailsState extends State<AdminViewHotelDetails> {
             maxLines: 3,
           ),
           const SizedBox(height: 15),
-          TextFormField(
-            controller: ratingController,
-            decoration: const InputDecoration(
-              labelText: 'Rating',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-              ),
-            ),
-            keyboardType: TextInputType.number,
-          ),
-          const SizedBox(height: 20),
           const Text(
             'Entertainments:',
             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),

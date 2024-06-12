@@ -285,6 +285,7 @@ class AdminAddHotelState extends State<AdminAddHotel> {
     final TextEditingController descriptionController = TextEditingController();
     bool isAvailable = true; // Default value
     String roomType = 'Single'; // Default value
+    bool isBooked = false;
 
     await showDialog(
       context: context,
@@ -384,6 +385,7 @@ class AdminAddHotelState extends State<AdminAddHotel> {
                   price: double.tryParse(priceController.text) ?? 0.0,
                   description: descriptionController.text,
                   isAvailable: isAvailable,
+                  isBooked: isBooked,
                 );
 
                 setState(() {

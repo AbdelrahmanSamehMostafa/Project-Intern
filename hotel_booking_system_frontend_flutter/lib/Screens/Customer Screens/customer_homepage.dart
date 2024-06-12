@@ -232,7 +232,7 @@ class CustomerHomePageState extends State<CustomerHomePage> {
   }
 
   void navigateToBookingHistory() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const CustomerBookingHistory()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerBookingHistory(customerId: widget.custId)));
   }
 
   void navigateToReviewHistory() {
